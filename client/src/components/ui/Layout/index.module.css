@@ -1,0 +1,17 @@
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+.main {
+  padding: 24px 48px 0;
+  overflow: scroll;
+}

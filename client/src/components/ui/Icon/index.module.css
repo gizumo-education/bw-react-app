@@ -1,0 +1,9 @@
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.gray-light path {
+  color: var(--gray);
+  stroke: var(--gray);
+}

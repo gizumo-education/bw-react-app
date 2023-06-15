@@ -1,0 +1,12 @@
+.sidebar {
+  width: 280px;
+  height: 100%;
+  padding: 16px;
+  background-color: var(--cream);
+}
+
+.navi-item {
+  display: inline-block;
+  width: 100%;
+  padding: 8px 10px;
+}
