@@ -6,37 +6,22 @@
   margin-top: 16px;
 }
 
-.list-item {
+.add-task {
   display: flex;
-  column-gap: 10px;
+  column-gap: 8px;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--gray-light);
-}
-
-.complete-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: 1px solid var(--gray);
-  border-radius: 50%;
-}
-
-.check-icon {
-  display: none;
-}
-
-.complete-button:hover > .check-icon {
-  display: block;
-}
-
-.title {
+  width: 100%;
   font-size: 14px;
 }
 
-.description {
-  font-size: 12px;
-  color: var(--indigo-blue);
+.plus-icon {
+  border-radius: 50%;
+}
+
+.add-task:hover > .plus-icon {
+  background-color: var(--orange);
+}
+
+.add-task:hover > .plus-icon path {
+  color: var(--white);
 }

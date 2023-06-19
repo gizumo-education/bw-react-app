@@ -1,4 +1,5 @@
 import { Layout } from '../../ui/Layout'
+
 import styles from './index.module.css'
 
 export const Top = () => {
