@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
+import { memo } from 'react'
 
 import { Header } from '../Header'
 import { Sidebar } from '../Sidebar'
 
 import styles from './index.module.css'
 
-export const Layout = ({ children }) => {
+export const Layout = memo(({ children }) => {
   return (
     <div className={styles.layout}>
       <Header />
@@ -15,10 +16,9 @@ export const Layout = ({ children }) => {
       </div>
     </div>
   )
-}
+})
 
 Layout.displayName = 'Layout'
 Layout.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.string, PropTypes.element])
-    .isRequired,
+  children: PropTypes.node.isRequired,
 }

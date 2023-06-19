@@ -17,7 +17,7 @@ export const Button = memo(({ className, buttonStyle, children, ...props }) => {
 
 Button.displayName = 'Button'
 Button.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+  children: PropTypes.node.isRequired,
   type: PropTypes.oneOf(['button', 'submit', 'reset']),
   className: PropTypes.string,
   buttonStyle: PropTypes.oneOf([
