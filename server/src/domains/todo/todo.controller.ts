@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, HttpException, HttpStatus } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common'
 import { TodoService } from './todo.service'
 
 @Controller('todo')
@@ -11,7 +21,10 @@ export class TodoController {
   }
 
   @Post()
-  createTodo(@Body('title') title: string, @Body('description') description: string) {
+  createTodo(
+    @Body('title') title: string,
+    @Body('description') description: string
+  ) {
     try {
       return this.todoService.createTodo({
         title,
@@ -33,6 +46,18 @@ export class TodoController {
         title,
         description,
       })
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND)
+    }
+  }
+
+  @Patch(':id/completion-status')
+  updateCompletionStatus(
+    @Param('id') id: string,
+    @Body('isCompleted') isCompleted: boolean
+  ) {
+    try {
+      return this.todoService.updateCompletionStatus(id, isCompleted)
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND)
     }

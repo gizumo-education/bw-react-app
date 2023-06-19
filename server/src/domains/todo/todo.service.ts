@@ -4,7 +4,8 @@ import { nanoid } from 'nanoid'
 import { Injectable } from '@nestjs/common'
 import type { Todo, TodoSaveSeed } from '../../models/todo/type'
 
-const todosJsonPath: string = path && path.join(__dirname, '../../data/todos.json')
+const todosJsonPath: string =
+  path && path.join(__dirname, '../../data/todos.json')
 
 @Injectable()
 export class TodoService {
@@ -16,31 +17,51 @@ export class TodoService {
   createTodo({ title, description }: TodoSaveSeed): Todo {
     const todos = this.getTodos()
     if (!title) {
-      throw new Error('タイトルが入力されていません。タスクを追加するには1文字以上のタイトルを入力してください。')
+      throw new Error(
+        'タイトルが入力されていません。タスクを追加するには1文字以上のタイトルを入力してください。'
+      )
     }
     const newTodo = {
       id: nanoid(),
       title,
       description,
+      isCompleted: false,
     }
     todos.push(newTodo)
     fs.writeFileSync(todosJsonPath, JSON.stringify(todos))
     return newTodo
   }
 
-  updateTodo(
-    id: string,
-    { title, description }: TodoSaveSeed
-  ): Todo {
+  updateTodo(id: string, { title, description }: TodoSaveSeed): Todo {
     const todos = this.getTodos()
     const todoIndex = todos.findIndex((todo) => todo.id === id)
     if (todoIndex < 0) {
-      throw new Error('更新対象のTodoが見つからなかったため更新できませんでした。')
+      throw new Error(
+        '更新対象のTodoが見つからなかったため更新できませんでした。'
+      )
     }
     const updatedTodo = {
       id,
       title,
       description,
+      isCompleted: todos[todoIndex].isCompleted,
+    }
+    todos[todoIndex] = updatedTodo
+    fs.writeFileSync(todosJsonPath, JSON.stringify(todos))
+    return updatedTodo
+  }
+
+  updateCompletionStatus(id: string, isCompleted: boolean): Todo {
+    const todos = this.getTodos()
+    const todoIndex = todos.findIndex((todo) => todo.id === id)
+    if (todoIndex < 0) {
+      throw new Error(
+        '対象のTodoが見つからなかったため完了・未完了の切り替えができませんでした。'
+      )
+    }
+    const updatedTodo = {
+      ...todos[todoIndex],
+      isCompleted: !isCompleted,
     }
     todos[todoIndex] = updatedTodo
     fs.writeFileSync(todosJsonPath, JSON.stringify(todos))
@@ -51,7 +72,9 @@ export class TodoService {
     const todos = this.getTodos()
     const todoIndex = todos.findIndex((todo) => todo.id === id)
     if (todoIndex < 0) {
-      throw new Error('削除対象のTodoが見つからなかったため削除できませんでした。')
+      throw new Error(
+        '削除対象のTodoが見つからなかったため削除できませんでした。'
+      )
     }
     todos.splice(todoIndex, 1)
     fs.writeFileSync(todosJsonPath, JSON.stringify(todos))

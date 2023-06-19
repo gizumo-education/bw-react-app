@@ -14,17 +14,20 @@ export const generateDataFile = (): void => {
           {
             "id": "${nanoid()}",
             "title": "React Hooks勉強",
-            "description": "useState, useEffectについて"
+            "description": "useState, useEffectについて",
+            "isCompleted": false
           },
           {
             "id": "${nanoid()}",
             "title": "React Router勉強",
-            "description": "useHistory, useLocationについて"
+            "description": "useHistory, useLocationについて",
+            "isCompleted": false
           },
           {
             "id": "${nanoid()}",
             "title": "Recoil勉強",
-            "description": "atom, selectorについて"
+            "description": "atom, selectorについて",
+            "isCompleted": false
           }
         ]`,
         (err) => {
