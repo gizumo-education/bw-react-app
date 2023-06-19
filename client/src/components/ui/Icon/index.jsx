@@ -1,12 +1,20 @@
 import PropTypes from 'prop-types'
 import { memo, useMemo } from 'react'
+
 import { IconContext } from 'react-icons'
-import { BsCheck2 } from 'react-icons/bs'
+import { BiCheck } from 'react-icons/bi'
+import { BsCircle } from 'react-icons/bs'
+import { HiPlus, HiOutlineTrash } from 'react-icons/hi'
+import { FiEdit3 } from 'react-icons/fi'
 
 import styles from './index.module.css'
 
 const ICON_MAP = {
-  check: <BsCheck2 />,
+  check: <BiCheck />,
+  plus: <HiPlus />,
+  edit: <FiEdit3 />,
+  trash: <HiOutlineTrash />,
+  circle: <BsCircle />,
 }
 
 const SIZE_LIST = {
@@ -36,9 +44,10 @@ export const Icon = memo(({ className, color, iconName, size }) => {
 Icon.displayName = 'Icon'
 Icon.propTypes = {
   className: PropTypes.string,
-  iconName: PropTypes.oneOf(['check']).isRequired,
+  iconName: PropTypes.oneOf(['check', 'plus', 'edit', 'trash', 'circle'])
+    .isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
-  color: PropTypes.oneOf(['gray-light']),
+  color: PropTypes.oneOf(['gray-light', 'orange', 'indigo-blue']),
 }
 Icon.defaultProps = {
   className: '',

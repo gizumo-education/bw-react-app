@@ -1,0 +1,56 @@
+.button {
+  height: 34px;
+  padding: 4px 20px;
+  font-size: 14px;
+  line-height: 100%;
+  color: var(--white);
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: opacity 0.2s;
+}
+
+.button::before {
+  display: inline-block;
+  height: 14px;
+  vertical-align: middle;
+  content: '';
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  background-color: var(--disable);
+}
+
+.button:not(:disabled, .indigo-blue):hover {
+  opacity: 0.8;
+}
+
+.orange {
+  color: var(--white);
+  background-color: var(--orange);
+}
+
+.indigo-blue {
+  height: auto;
+  padding: 8px 0;
+  color: var(--indigo-blue);
+  background-color: transparent;
+}
+
+.indigo-blue:hover {
+  color: var(--orange);
+}
+
+.cancel {
+  color: var(--dark-blue);
+  background-color: var(--gray-light);
+}
+
+.icon-only {
+  height: auto;
+  padding: 3px;
+  background-color: transparent;
+  border-radius: 50%;
+}
