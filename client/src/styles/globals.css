@@ -13,7 +13,7 @@
   --color-border-danger: #ff3b3b;
   --color-border: #cdcde0;
   --toastify-toast-width: auto;
-  --toastify-toast-min-height: 10px,
+  --toastify-toast-min-height: 10px;
 }
 
 html,
