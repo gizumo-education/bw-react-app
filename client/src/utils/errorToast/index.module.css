@@ -1,0 +1,8 @@
+.toast-message-error {
+  padding: 6px;
+  font-size: 14px;
+  color: var(--dark-blue);
+  background-color: var(--color-bg-danger);
+  border: solid 1px var(--color-border-danger);
+  border-radius: 5px;
+}

@@ -9,6 +9,11 @@
   --gray: #d2d8d6;
   --cream: #fefbf8;
   --disable: #ccc;
+  --color-bg-danger: #fde7e7;
+  --color-border-danger: #ff3b3b;
+  --color-border: #cdcde0;
+  --toastify-toast-width: auto;
+  --toastify-toast-min-height: 10px,
 }
 
 html,
@@ -49,4 +54,8 @@ textarea:focus {
 
 #root {
   height: 100%;
+}
+
+.Toastify__toast-container {
+  top: 66.25px;
 }
