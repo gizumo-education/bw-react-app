@@ -6,6 +6,7 @@ import { BiCheck } from 'react-icons/bi'
 import { BsCircle } from 'react-icons/bs'
 import { HiPlus, HiOutlineTrash } from 'react-icons/hi'
 import { FiEdit3 } from 'react-icons/fi'
+import { GrCircleAlert } from 'react-icons/gr'
 
 import styles from './index.module.css'
 
@@ -15,6 +16,7 @@ const ICON_MAP = {
   edit: <FiEdit3 />,
   trash: <HiOutlineTrash />,
   circle: <BsCircle />,
+  circleAlert: <GrCircleAlert />,
 }
 
 const SIZE_LIST = {
@@ -44,10 +46,16 @@ export const Icon = memo(({ className, color, iconName, size }) => {
 Icon.displayName = 'Icon'
 Icon.propTypes = {
   className: PropTypes.string,
-  iconName: PropTypes.oneOf(['check', 'plus', 'edit', 'trash', 'circle'])
-    .isRequired,
+  iconName: PropTypes.oneOf([
+    'check',
+    'plus',
+    'edit',
+    'trash',
+    'circle',
+    'circleAlert',
+  ]).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
-  color: PropTypes.oneOf(['gray-light', 'orange', 'indigo-blue']),
+  color: PropTypes.oneOf(['gray-light', 'orange', 'indigo-blue', 'danger']),
 }
 Icon.defaultProps = {
   className: '',

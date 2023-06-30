@@ -17,3 +17,8 @@
   color: var(--indigo-blue);
   stroke: var(--indigo-blue);
 }
+
+.danger path {
+  color: var(--color-border-danger);
+  stroke: var(--color-border-danger);
+}

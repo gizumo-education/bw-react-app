@@ -7,11 +7,6 @@ const NaviList = [
     lineName: 'Todo一覧',
     path: '/top',
   },
-  {
-    id: 2,
-    lineName: 'アカウント情報',
-    path: '/account',
-  },
 ]
 
 export const Sidebar = memo(() => {
