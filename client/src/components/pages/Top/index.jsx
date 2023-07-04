@@ -154,7 +154,7 @@ export const Top = () => {
 
   return (
     <Layout>
-      <h1 className={styles.heading}>Todo一覧</h1>
+      <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
           if (editTodoId === todo.id) {
