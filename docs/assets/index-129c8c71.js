@@ -1,2 +1,0 @@
-import{j as e}from"./jsx-runtime-6eef64cc.js";import{r as s}from"./index-c013ead5.js";const a="_header_frnuc_1",o="_text_frnuc_11",r={header:a,text:o},t=s.memo(()=>e.jsx("header",{className:r.header,children:e.jsx("p",{className:r.text,children:"React Todo App"})}));t.displayName="Header";t.__docgenInfo={description:"",methods:[],displayName:"Header"};export{t as H};
-//# sourceMappingURL=index-129c8c71.js.map
