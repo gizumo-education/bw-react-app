@@ -69,7 +69,7 @@ export const Top = () => {
           switch (error.statusCode) {
             case 404:
               errorToast(
-                '更新するTodoが見つかりませんでした。画面を更新して再度お試しください。'
+                '編集するToDoが見つかりませんでした。画面を更新して再度お試しください。'
               )
               break
             default:
@@ -104,7 +104,7 @@ export const Top = () => {
         switch (error.statusCode) {
           case 404:
             errorToast(
-              '削除するTodoが見つかりませんでした。画面を更新して再度お試しください。'
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
             )
             break
           default:
@@ -129,7 +129,7 @@ export const Top = () => {
           switch (error.statusCode) {
             case 404:
               errorToast(
-                '完了・未完了を切り替えるTodoが見つかりませんでした。画面を更新して再度お試しください。'
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
               )
               break
             default:

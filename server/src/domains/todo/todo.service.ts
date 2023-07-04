@@ -36,7 +36,7 @@ export class TodoService {
     const todos = this.getTodos()
     const todoIndex = todos.findIndex((todo) => todo.id === id)
     if (todoIndex < 0) {
-      throw new Error('更新するTodoのidが見つかりませんでした。')
+      throw new Error('更新するToDoのidが見つかりませんでした。')
     }
     const updatedTodo = {
       id,
@@ -54,7 +54,7 @@ export class TodoService {
     const todoIndex = todos.findIndex((todo) => todo.id === id)
     if (todoIndex < 0) {
       throw new Error(
-        '完了・未完了を切り替えるTodoのidが見つかりませんでした。'
+        '完了・未完了を切り替えるToDoのidが見つかりませんでした。'
       )
     }
     const updatedTodo = {
@@ -70,7 +70,7 @@ export class TodoService {
     const todos = this.getTodos()
     const todoIndex = todos.findIndex((todo) => todo.id === id)
     if (todoIndex < 0) {
-      throw new Error('削除するTodoのidが見つかりませんでした。')
+      throw new Error('削除するToDoのidが見つかりませんでした。')
     }
     todos.splice(todoIndex, 1)
     fs.writeFileSync(todosJsonPath, JSON.stringify(todos))
