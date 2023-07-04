@@ -28,7 +28,7 @@ npm i
 npm run start
 ```
 
-5. ブラウザで[localhost:8000](http://localhost:8000)が立ち上がり、Todo アプリ画面が表示されることを確認
+5. ブラウザで[localhost:8000](http://localhost:8000)が立ち上がり、ToDo アプリ画面が表示されることを確認
 
 ## ディレクトリ構成
 

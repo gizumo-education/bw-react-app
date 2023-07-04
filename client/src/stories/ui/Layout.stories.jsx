@@ -23,6 +23,6 @@ export default {
 
 export const Sample = {
   args: {
-    children: 'Todo一覧',
+    children: 'ToDo一覧',
   },
 }

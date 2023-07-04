@@ -4,7 +4,7 @@ import styles from './index.module.css'
 const NaviList = [
   {
     id: 1,
-    lineName: 'Todo一覧',
+    lineName: 'ToDo一覧',
     path: '/top',
   },
 ]
