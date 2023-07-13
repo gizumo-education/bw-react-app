@@ -78,6 +78,31 @@ export const Top = () => {
   [todos]
   )
 
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios
+      .delete(`http://localhost:3000/todo/${id}`)
+      .then(({ data }) => {
+        console.log(data);
+        setTodos(data);
+      })
+  },[])
+
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+      .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+        isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+      })
+      .then(({ data }) => {
+        setTodos(
+          todos.map(
+            (todo) => todo.id === id ? {...data} : {...todo})
+          )
+      })
+    },
+    [todos]
+  )
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
@@ -106,6 +131,8 @@ export const Top = () => {
             key={todo.id}
             todo={todo}
             onEditButtonClick={handleEditButtonClick}
+            onDeleteButtonClick={handleDeleteButtonClick}
+            onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
