@@ -7,6 +7,7 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
@@ -42,6 +43,9 @@ export const Top = () => {
           description: '',
         })
       })
+      .catch((error) => {
+        errorToast(error.message)
+      })
     },
     [inputValues]
   )
@@ -59,6 +63,18 @@ export const Top = () => {
             title: '',
             description: '',
           })
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [editTodoId, inputValues]
@@ -78,6 +94,18 @@ export const Top = () => {
     .then(({data}) => {
       setTodos(data)
     })
+    .catch((error) => {
+      switch (error.statusCode) {
+        case 404:
+          errorToast(
+            '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+          )
+          break
+        default:
+          errorToast(error.message)
+          break
+      }
+    })
   }, [])
   const handleToggleButtonClick = useCallback(
     (id) => {
@@ -90,12 +118,27 @@ export const Top = () => {
             todos.map((todo) => (todo.id === data.id ? data : todo))
           )
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [todos]
   )
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
+    })
+    .catch((error) => {
+      errorToast(error.message)
     })
   }, [])
 
