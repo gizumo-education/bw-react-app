@@ -18,6 +18,11 @@
   stroke: var(--indigo-blue);
 }
 
+.dark-blue {
+  color: var(--dark-blue);
+  stroke: var(--dark-blue);
+}
+
 .danger path {
   color: var(--color-border-danger);
   stroke: var(--color-border-danger);

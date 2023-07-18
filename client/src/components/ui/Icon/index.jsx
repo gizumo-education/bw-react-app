@@ -3,10 +3,11 @@ import { memo, useMemo } from 'react'
 
 import { IconContext } from 'react-icons'
 import { BiCheck } from 'react-icons/bi'
-import { BsCircle } from 'react-icons/bs'
+import { BsCircle, BsListTask } from 'react-icons/bs'
 import { HiPlus, HiOutlineTrash } from 'react-icons/hi'
 import { FiEdit3 } from 'react-icons/fi'
 import { GrCircleAlert } from 'react-icons/gr'
+import { LuCheckSquare } from 'react-icons/lu'
 
 import styles from './index.module.css'
 
@@ -17,6 +18,8 @@ const ICON_MAP = {
   trash: <HiOutlineTrash />,
   circle: <BsCircle />,
   circleAlert: <GrCircleAlert />,
+  todoList: <BsListTask />,
+  completeList: <LuCheckSquare />,
 }
 
 const SIZE_LIST = {
@@ -53,9 +56,17 @@ Icon.propTypes = {
     'trash',
     'circle',
     'circleAlert',
+    'todoList',
+    'completeList',
   ]).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
-  color: PropTypes.oneOf(['gray-light', 'orange', 'indigo-blue', 'danger']),
+  color: PropTypes.oneOf([
+    'gray-light',
+    'orange',
+    'indigo-blue',
+    'dark-blue',
+    'danger',
+  ]),
 }
 Icon.defaultProps = {
   className: '',
