@@ -53,8 +53,11 @@ Form.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
   }).isRequired,
-  editTodoId: PropTypes.string.isRequired,
+  editTodoId: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+}
+Form.defaultProps = {
+  editTodoId: '',
 }
