@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import { memo } from 'react'
-
 import { Header } from '../Header'
 import { Sidebar } from '../Sidebar'
 
