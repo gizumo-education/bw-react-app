@@ -20,12 +20,14 @@ export const Top = () => {
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
+  //ToDo追加ボタン
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
 
+  //削除ボタン
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('')
     setIsAddTaskFormOpen(false)
@@ -36,6 +38,7 @@ export const Top = () => {
     setInputValues((prev) => ({ ...prev, [name]: value}))
   }, [])
 
+  //ToDo作成
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -57,6 +60,7 @@ export const Top = () => {
     [inputValues]
   )
 
+  //ToDo編集
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -105,6 +109,7 @@ export const Top = () => {
       [todos]
     )
 
+    //ToDo削除
     const handleDeleteButtonClick = useCallback((id) => {
       axios
       .delete(`http://localhost:3000/todo/${id}`)
@@ -128,6 +133,7 @@ export const Top = () => {
       })
     }, [])
 
+    //完了・未完了切り替え
     const handleToggleButtonClick = useCallback(
       (id) => {
         axios
@@ -135,7 +141,6 @@ export const Top = () => {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
-          console.log(data)
           setTodos(
             todos.map(
               (todo) => (todo.id === data.id ? data:todo)
@@ -161,9 +166,9 @@ export const Top = () => {
       [todos]
     )
 
+  //ToDo一覧表示
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
-      console.log(data)
       setTodos(data)
     })
 
@@ -182,6 +187,7 @@ export const Top = () => {
               <li key={todo.id}>
                 <Form
                   value={inputValues}
+                  editTodoId={editTodoId}
                   onChange={handleInputChange}
                   onCancelClick={handleCancelButtonClick}
                   onSubmit={handleEditedTodoSubmit}
