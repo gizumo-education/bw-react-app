@@ -7,6 +7,8 @@ import {Button} from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
+
 import styles from './index.module.css'
 
 export const Top = () => {
@@ -46,6 +48,11 @@ export const Top = () => {
           description: '',
         })
       })
+      
+      //エラーハンドリング
+      .catch((error) => {
+        errorToast(error.message)
+      })
     },
     [inputValues]
   )
@@ -59,11 +66,26 @@ export const Top = () => {
           console.log(data)
           setTodos (
             todos.map(
-              (todo) => todo.id === editTodoId ? {...data}:{...todo})
+              (todo) => todo.id === editTodoId ? data:todo)
           )
           setEditTodoId('')
           setInputValues({title: '', description: ''})
           setIsAddTaskFormOpen(false)
+        })
+
+        //エラーハンドリング
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast (
+                '更新するToDodが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [editTodoId, inputValues]
@@ -89,6 +111,21 @@ export const Top = () => {
       .then(({data}) => {
         setTodos(data)
       })
+
+      //エラーハンドリング
+      .catch((error) => {
+        switch(error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
     }, [])
 
     const handleToggleButtonClick = useCallback(
@@ -101,9 +138,24 @@ export const Top = () => {
           console.log(data)
           setTodos(
             todos.map(
-              (todo) => (todo.id === data.id ? data : todo)
+              (todo) => (todo.id === data.id ? data:todo)
             )
           )
+        })
+
+        //エラーハンドリング
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+
+            default:
+              errorToast(error.message)
+              break
+          }
         })
       },
       [todos]
@@ -113,6 +165,11 @@ export const Top = () => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       console.log(data)
       setTodos(data)
+    })
+
+    //エラーハンドリング
+    .catch((error) => {
+      errorToast(error.message)
     })
   },[])
   return (
@@ -125,7 +182,6 @@ export const Top = () => {
               <li key={todo.id}>
                 <Form
                   value={inputValues}
-                  //editTodoId={editTodoId}
                   onChange={handleInputChange}
                   onCancelClick={handleCancelButtonClick}
                   onSubmit={handleEditedTodoSubmit}
