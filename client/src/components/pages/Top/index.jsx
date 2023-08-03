@@ -43,7 +43,6 @@ export const Top = () => {
         setTodos((prevTodos) => [...prevTodos, data])
         setIsAddTaskFormOpen(false)
         setInputValues({ title: '', description: '' })
-        console.log(data)
       })
       .catch((error) => {
         errorToast(error.message)
@@ -60,12 +59,12 @@ export const Top = () => {
         .then(({ data }) => {
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === editTodoId ? { ...todo, ...inputValues } : todo
+              todo.id === editTodoId ? { ...todo, ...inputValues, ...data } : todo
             )
           )
           setEditTodoId('')
           setInputValues({ title: '', description: '' })
-          console.log(data)
+
         })
         .catch((error) => {
           switch (error.statusCode) {
@@ -96,10 +95,9 @@ export const Top = () => {
     [todos]
   )
 
-  const handleDeleteButtonClick = useCallback((id) => {//削除するAPI通信
+  const handleDeleteButtonClick = useCallback((id) => {//削除するAPI通信　修正
     axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id))
-      console.log(data)
+      setTodos(data)
     })
     .catch((error) => {
       switch (error.statusCode) {
@@ -115,20 +113,19 @@ export const Top = () => {
     })
   }, [])
 
-  const handleToggleButtonClick = useCallback(//完了・未完了を切り替えるAPI通信
+  const handleToggleButtonClick = useCallback(//完了・未完了を切り替えるAPI通信　修正
     (id) => {
       const targetTodo = todos.find((todo) => todo.id === id)
       const updatedTodo = { ...targetTodo, isCompleted: !targetTodo.isCompleted }
 
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
-          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+          isCompleted: !targetTodo.isCompleted,
         })
         .then(({ data }) => {
           setTodos((prevTodos) =>
-            prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo))
+            prevTodos.map((todo) => (todo.id === data.id ? updatedTodo : todo))
           )
-          console.log(data)
         })
         .catch((error) => {
           switch (error.statusCode) {
