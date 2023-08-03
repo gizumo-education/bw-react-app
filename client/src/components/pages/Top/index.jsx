@@ -56,7 +56,7 @@ export const Top = () => {
     (event) => {
       event.preventDefault()
       axios
-        .patch(`http://localhost:3000/todo/editTodoId`, inputValues)
+      .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
