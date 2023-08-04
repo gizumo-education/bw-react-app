@@ -59,7 +59,7 @@ export const Top = () => {
         .then(({ data }) => {
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === editTodoId ? { ...todo, ...inputValues, ...data } : todo
+              todo.id === editTodoId ? { ...inputValues, ...data } : todo
             )
           )
           setEditTodoId('')
@@ -95,7 +95,7 @@ export const Top = () => {
     [todos]
   )
 
-  const handleDeleteButtonClick = useCallback((id) => {//削除するAPI通信　修正
+  const handleDeleteButtonClick = useCallback((id) => {//削除するAPI通信
     axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
       setTodos(data)
     })
@@ -113,20 +113,18 @@ export const Top = () => {
     })
   }, [])
 
-  const handleToggleButtonClick = useCallback(//完了・未完了を切り替えるAPI通信　修正
+  const handleToggleButtonClick = useCallback(//完了・未完了を切り替えるAPI通信
     (id) => {
-      const targetTodo = todos.find((todo) => todo.id === id)
-      const updatedTodo = { ...targetTodo, isCompleted: !targetTodo.isCompleted }
-
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
-          isCompleted: !targetTodo.isCompleted,
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
-          setTodos((prevTodos) =>
-            prevTodos.map((todo) => (todo.id === data.id ? updatedTodo : todo))
-          )
-        })
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) =>
+        (todo.id === data.id ? { ...data } : todo))
+      )
+    })
         .catch((error) => {
           switch (error.statusCode) {
             case 404:
