@@ -82,14 +82,13 @@ export const Top = () => {
         return todo
       })
 
-      setTodos(updatedTodos)
-
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
           console.log(data)
+          setTodos(updatedTodos)
         })
         .catch((error) => {
           switch (error.statusCode) {
