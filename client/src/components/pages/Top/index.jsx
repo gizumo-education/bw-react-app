@@ -52,9 +52,8 @@ export const Top = () => {
     (id) => {
       axios
         .delete(`http://localhost:3000/todo/${id}`)
-        .then(() => {
-          const deleteTodos = todos.filter((todo) => todo.id !== id)
-          setTodos(deleteTodos)
+        .then(({ data }) => {
+          setTodos(data)
           console.log({ id })
         })
         .catch((error) => {
