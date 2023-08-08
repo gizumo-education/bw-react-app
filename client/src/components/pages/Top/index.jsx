@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
@@ -10,7 +12,8 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])//useStateフックを使って以下４つを初期化
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     title: '',
@@ -48,7 +51,7 @@ export const Top = () => {
         errorToast(error.message)
       })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   const handleEditedTodoSubmit = useCallback(//編集するAPI通信
@@ -59,7 +62,7 @@ export const Top = () => {
         .then(({ data }) => {
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === editTodoId ? { ...inputValues, ...data } : todo
+              todo.id === editTodoId ? { ...data } : todo
             )
           )
           setEditTodoId('')
@@ -79,7 +82,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   const handleEditButtonClick = useCallback(//編集ボタンが押された時の処理
@@ -111,7 +114,9 @@ export const Top = () => {
           break
       }
     })
-  }, [])
+    },
+    [setTodos]
+  )
 
   const handleToggleButtonClick = useCallback(//完了・未完了を切り替えるAPI通信
     (id) => {
@@ -138,7 +143,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
 
   useEffect(() => {//初回レンダリング時に一度だけToDoリストを取得するAPI通信
@@ -148,7 +153,7 @@ export const Top = () => {
     .catch((error) => {
       errorToast(error.message)
     })
-  }, [])
+  }, [setTodos])
 
   return (//一覧の表示
     <Layout>
