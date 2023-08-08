@@ -74,13 +74,9 @@ export const Top = () => {
 
   const handleToggleButtonClick = useCallback(
     (id) => {
-      const updatedTodos = todos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, isCompleted: !todo.isCompleted }
-        }
-        return todo
-      })
-
+      const updatedTodos = todos.map((todo) =>
+        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+      )
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
@@ -148,12 +144,9 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          const updatedTodos = todos.map((todo) => {
-            if (todo.id === editTodoId) {
-              return { ...todo, ...data }
-            }
-            return todo
-          })
+          const updatedTodos = todos.map((todo) =>
+            todo.id === editTodoId ? { ...todo, ...data } : todo
+          )
           setTodos(updatedTodos)
           setEditTodoId('')
           setInputValues({
