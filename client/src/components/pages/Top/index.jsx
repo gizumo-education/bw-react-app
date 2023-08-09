@@ -85,18 +85,6 @@ export const Top = () => {
           setTodos(updatedTodos)
           console.log(data)
         })
-        .catch((error) => {
-          switch (error.statusCode) {
-            case 404:
-              errorToast(
-                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
-              )
-              break
-            default:
-              errorToast(error.message)
-              break
-          }
-        })
     },
     [todos, setTodos]
   )
@@ -145,7 +133,7 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           const updatedTodos = todos.map((todo) =>
-            todo.id === editTodoId ? { ...todo, ...data } : todo
+            todo.id === editTodoId ? data : todo
           )
           setTodos(updatedTodos)
           setEditTodoId('')
