@@ -74,14 +74,14 @@ export const Top = () => {
 
   const handleToggleButtonClick = useCallback(
     (id) => {
-      const updatedTodos = todos.map((todo) =>
-        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-      )
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
+          const updatedTodos = todos.map((todo) =>
+            todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+          )
           console.log(data)
           setTodos(updatedTodos)
         })
