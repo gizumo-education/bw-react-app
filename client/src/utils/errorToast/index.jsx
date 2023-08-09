@@ -6,6 +6,7 @@ import styles from './index.module.css'
 const customId = 'custom-id-yes'
 
 export const errorToast = (message) => {
+  // errorToast関数は、引数に渡されたメッセージをトーストメッセージとして表示してくれる。
   toast.error(message, {
     autoClose: false,
     position: toast.POSITION.TOP_RIGHT,
