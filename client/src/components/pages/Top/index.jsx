@@ -80,10 +80,10 @@ export const Top = () => {
         })
         .then(({ data }) => {
           const updatedTodos = todos.map((todo) =>
-            todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+            todo.id === data.id ? data : todo
           )
-          console.log(data)
           setTodos(updatedTodos)
+          console.log(data)
         })
         .catch((error) => {
           switch (error.statusCode) {
