@@ -20,16 +20,18 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
 
       {/* ↓完了・未完了＿切り替えボタンの表示 */}
       {/* 切り替えボタンをクリックした時に、onToggleButtonClickというpropsで渡された関数を実行するようにしている↓ */}
+      {/* 条件演算子を使用して、 */}
       {/* ToDoが完了しているかどうかで表示するアイコンが変わるため、todo.isCompletedの値によって表示するアイコンが変わるように! */}
-      {todo.isCompleted ? (
-        <Button
+
+      {todo.isCompleted ? (   //isCompleted→Top>138行目
+        <Button  //↓クリックアクション有りの場合： ✔️
           buttonStyle='icon-only'
           className={styles['complete-button']}
           onClick={() => onToggleButtonClick(todo.id)}
         >
           <Icon iconName='check' size='large' color='orange' />
         </Button>
-      ) : (
+      ) : (  //↓クリックアクション無しの場合： ◯
         <Button
           buttonStyle='icon-only'
           className={styles['complete-button']}
@@ -39,10 +41,8 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
         </Button>
       )}
       {/* ↓完了済みToDoには打ち消しぼう↓ */}
-
       <div className={styles.task}>
         {/*↓ classNameに'task-completed'を追加 */}
-        {/* わからん↓ */}
         <div
         className={`${styles.title} ${
           todo.isCompleted ? styles['task-completed'] : ''
@@ -59,13 +59,11 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
           >
             {todo.description}
           </div>
-          // ↑わからん
         )}
 
 
       </div>
-
-
+      {/* //↓編集ボタンの追加// */}
       <div className={styles['task-action']}>
         <Button
           buttonStyle='icon-only'

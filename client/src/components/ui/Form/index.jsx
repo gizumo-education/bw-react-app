@@ -36,7 +36,7 @@ export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit
           キャンセル
         </Button>
         <Button
-          type='submit'
+          type='submit' //formタグのonSubmitにとぶ＿11行目
           disabled={!value.title}
           className={styles['submit-button']}
         >
@@ -46,6 +46,9 @@ export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit
     </form>
   )
 })
+// editTodoIdをpropsとして受け取り、editTodoIdの値によって以下のように表示する文言を変更するようにしている。
+  //●editTodoIdにidがセットされている場合は、ToDoの編集フォームが開いている時なので「保存」を表示
+  //●editTodoIdにidがセットされていない場合は、ToDoの編集フォームが閉じている時なので「タスクを追加」を表示
 
 Form.displayName = 'Form'
 Form.propTypes = {

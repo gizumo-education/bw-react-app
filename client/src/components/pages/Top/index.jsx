@@ -18,22 +18,24 @@ export const Top = () => {
     title: '',
     description: '',
   })
+  //↓追加フォームの表示・非表示を管理するためのstate
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
-
+  //↑通常時は、フォームは閉じた状態で「タスク追加」ボタンのみ表示状態にしたいので、"false"
   const handleAddTaskButtonClick = useCallback(() => {//「タスクを追加」ボタンをクリックした時に実行される関数
     setInputValues({ title: '', description: '' })
     setEditTodoId('') // 追加
-    setIsAddTaskFormOpen(true)
+    setIsAddTaskFormOpen(true) //→ Buttonコンポ228行目にprposとして渡す
   }, [])
   // ↑ ToDoの追加フォームを表示する処理を実装
 
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('')  // 追加
-    setIsAddTaskFormOpen(false)
+    setIsAddTaskFormOpen(false) //→ Formコンポ221行目にprposとして渡す
     setInputValues({ title: '', description: '' })
   }, []) //まずは、キャンセルボタンをクリックした時に実行するhandleCancelButtonClick関数
-  // ↑ ToDoの追加フォームを非表示にする処理を実装
+  // ↑ falseなので、ToDoの追加フォームを非表示にする処理を実装
 
+  // ↓handleInputChange=フォームの入力が変更されたときに実行される
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
@@ -41,12 +43,11 @@ export const Top = () => {
   // ↑ ToDoのタイトルと説明の入力欄に入力した値をstateのinputValuesに反映する処理
 
   const handleCreateTodoSubmit = useCallback(
-    (event) => {
-      event.preventDefault()
+    (event) => { //handleCreateTodoSubmitの引数
+      event.preventDefault() //〈frontタグのデフォルトイベントである〈ページ遷移〉をキャンセルしている
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         setTodos((prevTodos) => [...prevTodos, data])// 追加したToDoを一覧に表示する
-        // ToDoの追加フォームを非表示に
-        setIsAddTaskFormOpen(false)
+        setIsAddTaskFormOpen(false) //ToDoの追加フォームを非表示に
         setInputValues({ title: '', description: '' })
       })
 
@@ -57,22 +58,31 @@ export const Top = () => {
     },
     [inputValues]
   )
+///////////////ToDoの編集機能の実装///////////////
+  // ToDoの編集フォームでToDoのタイトルと説明を編集し、
+  // 保存ボタンをクリックした時に、ToDoのタイトルと説明を更新する処理を実装していく。↓
 
-  const handleEditedTodoSubmit = useCallback(  //編入するAPI通信
+  const handleEditedTodoSubmit = useCallback(  //編集するAPI通信
     (event) => {
-      event.preventDefault()
+      event.preventDefault()//formタグのデフォルトのイベントであるページ遷移をキャンセル
       axios
-        .patch(`http://localhost:3000/todo/editTodoId`, inputValues)
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
+          // console.log(data)
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === editTodoId ? { ...inputValues, ...data } : todo
+              // todo.id === editTodoId ? { ...inputValues, ...data } : todo
+              todo.id === editTodoId ? data : todo
             )  //  ↑三項演算子（? : ）を使った条件付きレンダー
           )
-          setEditTodoId('')
-          setInputValues({ title: '', description: '' })
+          setEditTodoId('')  //
+          // setInputValues({ title: '', description: '' })
 
         })
+// patchメソッド...データがすでに存在しているものに対して更新をかける処理
+
+
+
         // ToDoの編集のエラーハンドリングは、ToDoの編集のAPIを呼び出すhandleEditedTodoSubmit関数で行う
         .catch((error) => {
           switch (error.statusCode) {
@@ -91,13 +101,14 @@ export const Top = () => {
   )
 
 
-
-  const handleEditButtonClick = useCallback(//編集ボタンが押された時の処理
-    (id) => {
+//handleEditButtonClick = 子onEditButtonClick(ListItem)
+  const handleEditButtonClick = useCallback(//編集ボタンが押された時に実行される処理↓
+    (id) => {   //ListItem_71行目(todo.id)
       setIsAddTaskFormOpen(false) //追加
-      setEditTodoId(id)
+      setEditTodoId(id)   //editTodoIdに編集するToDoのidを格納
       // ↓追加
-      const targetTodo = todos.find((todo) => todo.id === id)
+      const targetTodo = todos.find((todo) => todo.id === id)//find...配列の要素を探して一番最初に見つかった要素を取得
+      //↑99で_editTodoIdに格納されたToDoのidと、表示されているToDoのidが一致するか
       setInputValues({
         title: targetTodo.title,
         description: targetTodo.description,
@@ -106,6 +117,7 @@ export const Top = () => {
     },
     [todos]
   )//依存配列にtodosを追加
+  //依存配列 = useEffect()の第2引数」に第1引数で指定したコールバック関数が呼び出され
 
   const handleDeleteButtonClick = useCallback((id) => {  //↓削除クリック
     // handleDeleteButtonClick関数は、引数に削除するToDoのidを受け取る
@@ -129,19 +141,18 @@ export const Top = () => {
   }, [])
 
   const handleToggleButtonClick = useCallback(  //18_完了・未完了API通信
-    (id) => {
-      axios
+    (id) => {//引数＿完了・未完了の切り替え対象のToDoのid
+      axios // ＊patchメソッド...データがすでに存在しているものに対して更新をかける処理
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
-        })
-
+        })//find...配列の要素を探して一番最初に見つかった要素を取得
         .then(({ data }) => {
-          // console.log(data)
+            console.log(data)
+          
           setTodos((prevTodos) =>
             // console.log(todos)
             prevTodos.map((todo) =>
               (todo.id === data.id ? data : todo))
-
           )
         })
         .catch((error) => {
@@ -167,9 +178,9 @@ export const Top = () => {
       setTodos(data);      ////////解答＿ToDoの一覧表示
 
     })
-    .catch((error) => {
-      errorToast(error.message)
-    })
+      .catch((error) => {
+        errorToast(error.message)
+      })
   }, [])
 
   // レンダリング間でデータを保持することができる”state変数”（「state」）→todos
@@ -181,6 +192,8 @@ export const Top = () => {
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
+          //if文でeditTodoIdに格納されたToDoのidとtodosに格納されたToDoのidが一致するかどうか
+            //一致する場合は編集フォームを表示する
           if (editTodoId === todo.id) {
             return (
               <li key={todo.id}>
@@ -194,12 +207,15 @@ export const Top = () => {
               </li>
             )
           }
-          // value...ToDoの追加フォームに入力された値を保持するstateを受け取る
-          //  editTodoId...ToDoの追加フォームに入力された値をstateに反映させる関数を受け取る
-          // onCancelClick...ToDoの追加フォームを閉じる関数を受け取る
-          // onSubmit...ToDoの追加フォームの送信処理を行う関数を受け取る
+          //〈↓ ユーザーアクションを受け取るprops ↓〉
+          // value...ToDoの追加フォームに入力された値を保持するstateを受け取るprops
+          // editTodoId...ToDoの追加フォームに入力された値をstateに反映させる関数を受け取るprops
+          // onCancelClick...ToDoの追加フォームを閉じる関数を受け取るprops
+          // onSubmit...ToDoの追加フォームの送信処理を行う関数を受け取るprops
+
+
           return (
-            <ListItem
+            <ListItem //他のコンポーネントへそれぞれ関数の渡している
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
@@ -209,8 +225,7 @@ export const Top = () => {
           )
         })}
         <li>
-          {/* ↓ liタグの中を全て置き換え */}
-          {isAddTaskFormOpen ? (
+          {isAddTaskFormOpen ? ( //追加ボタンの表示
             <Form
               value={inputValues}
               onChange={handleInputChange} // onChangeを追加
@@ -221,7 +236,7 @@ export const Top = () => {
           ) : (   //////←何？
             <Button
               buttonStyle='indigo-blue'
-              onClick={handleAddTaskButtonClick} // 追加
+              onClick={handleAddTaskButtonClick} // 228行目から
               className={styles['add-task']}
             >
               <Icon
@@ -233,7 +248,6 @@ export const Top = () => {
               タスクを追加
             </Button>
           )}
-          {/*  ↑ liタグの中を全て置き換え */}
         </li>
       </ul>
     </Layout>
