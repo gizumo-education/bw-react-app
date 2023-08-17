@@ -1,6 +1,10 @@
 
 import { useState, useEffect, useCallback } from 'react' // 追加１ ＋useStateを追加２
+
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState' // 追加
+
 import { ListItem } from '../../ui/ListItem'
 import { Layout } from '../../ui/Layout'
 import { Button } from '../../ui/Button' //追加15
@@ -12,7 +16,9 @@ import styles from './index.module.css'
 
 // Topコンポーネント（親）
 export const Top = () => {
-  const [todos, setTodos] = useState([]) // 追加14
+  // const [todos, setTodos] = useState([]) // 追加14
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
   const [editTodoId, setEditTodoId] = useState('') // 追加
   const [inputValues, setInputValues] = useState({
     title: '',
@@ -56,7 +62,7 @@ export const Top = () => {
         })
 
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 ///////////////ToDoの編集機能の実装///////////////
   // ToDoの編集フォームでToDoのタイトルと説明を編集し、
@@ -97,7 +103,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
 
@@ -138,7 +144,7 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  }, [setTodos])
 
   const handleToggleButtonClick = useCallback(  //18_完了・未完了API通信
     (id) => {//引数＿完了・未完了の切り替え対象のToDoのid
@@ -168,7 +174,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   ) //105
 
   // 以下のuseEffectの処理を追加１
@@ -181,7 +187,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
   // レンダリング間でデータを保持することができる”state変数”（「state」）→todos
   // Reactに再度コンポーネントをレンダリングして欲しいと伝えることができるstate更新関数（「更新関数」）→setToDOs
