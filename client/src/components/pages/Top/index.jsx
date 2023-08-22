@@ -94,7 +94,7 @@ export const Top = () => {
   const handleDeleteButtonClick = useCallback(
     (id) => {
       axios.delete(`http://localhost:3000/todo/${id}`, inputValues).then(({ data }) => {
-        console.log(data)
+        // console.log(data)
         setTodos(data);
       })
       .catch((error) => {
