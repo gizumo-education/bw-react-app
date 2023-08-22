@@ -7,6 +7,7 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+
 import styles from './index.module.css'
 
 export const Top = () => {
@@ -76,10 +77,30 @@ export const Top = () => {
   const handleDeleteButtonClick = useCallback(
     (id) => {
       axios.delete(`http://localhost:3000/todo/${id}`, inputValues).then(({ data }) => {
-        // console.log(id)
-        setTodos((prevTodos) => prevTodos.filter(todo => todo.id !== id));
+        console.log(data)
+        setTodos(data);
       })
-  }, [inputValues]);
+  }, [])
+  // 完了・未完了の切り替え
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      console.log(todos)
+      const todoToUpdate = todos.find((todo) => todo.id === id);
+      const updatedCompletionStatus = !todoToUpdate.isCompleted;
+
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: updatedCompletionStatus,
+        })
+        .then(({ data }) => {
+          // console.log(data)
+          const updatedTodos = todos.map((todo) =>
+          todo.id === data.id ? { ...todo, isCompleted: !data.isCompleted } : todo);
+          setTodos(updatedTodos); // stateを更新
+        })
+    },
+    [todos, setTodos]
+  )
   useEffect(() => {
     axios.get('http://localhost:3000/todo', inputValues).then(({ data }) => {
       setTodos(data);
@@ -111,6 +132,7 @@ export const Top = () => {
             todo={todo}
             onEditButtonClick={handleEditButtonClick}
             onDeleteButtonClick={handleDeleteButtonClick}
+            onToggleButtonClick={handleToggleButtonClick}
           />
         )
       })}
