@@ -9,7 +9,8 @@ export const completedTodoListState = selector({
   key: 'completedTodoListState',
   get: ({get}) => {
     const completedTodoListStates = get(todoState)
-    return completedTodoListStates.filter((completedList) => completedList.isCompleted === true)
+    // 短くしました↓
+    return completedTodoListStates.filter(completedList => completedList.isCompleted)
   },
 })
 

@@ -22,7 +22,7 @@ export const Top = () => {
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
   const todos = useRecoilValue(incompleteTodoListState)
   const setTodos = useSetRecoilState(todoState)
- 
+
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
@@ -59,14 +59,16 @@ export const Top = () => {
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault() // デフォルトのイベントであるページ遷移をキャンセル
-      axios
-        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues).then(({ data }) => {
-          // console.log(data)
+      axios.patch(`http://localhost:3000/todo/${editTodoId}`, inputValues).then(({ data }) => {
+          // console.log(data, "ここ")
           setInputValues({
             title: '',
             description: '',
           });
-          // ここに更新した時に全取得するコードを書いてほしい
+          // 更新した時に全取得するコード↓
+          const upDateList = todos.map((todo) =>
+          todo.id === data.id ? data:todo);
+          setTodos(upDateList); // stateを更新
           setEditTodoId('')
         })
         .catch((error) => {
@@ -121,7 +123,7 @@ export const Top = () => {
   // 完了・未完了の切り替え
   const handleToggleButtonClick = useCallback(
     (id) => {
-      console.log(todos, "axiosの前")
+      // console.log(todos, "axiosの前")
       const todoToUpdate = todos.find((todo) => todo.id === id);
       const updatedCompletionStatus = todoToUpdate.isCompleted;
 
@@ -130,9 +132,8 @@ export const Top = () => {
           isCompleted: updatedCompletionStatus,
         })
         .then(({ data }) => {
-          console.log(data, "thenの中")
+          // console.log(data, "thenの中")
           const updatedTodos = todos.map((todo) =>
-          // ここ↓を短縮して書きたい
           todo.id === data.id ? data:todo);
           setTodos(updatedTodos); // stateを更新
         })

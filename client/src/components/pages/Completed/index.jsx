@@ -1,20 +1,19 @@
-import { useEffect, useCallback } from 'react' // 追加
-import { useRecoilValue, useSetRecoilState } from 'recoil' // 追加
-import { axios } from '../../../utils/axiosConfig' // 追加
-import { todoState, completedTodoListState } from '../../../stores/todoState' // 追加
+import { useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { axios } from '../../../utils/axiosConfig'
+import { todoState, completedTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
-import { ListItem } from '../../ui/ListItem' // 追加
+import { ListItem } from '../../ui/ListItem'
 
-import { errorToast } from '../../../utils/errorToast' // 追加
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
 export const Completed = () => {
-  const todos = useRecoilValue(completedTodoListState) // 追加
-  const setTodos = useSetRecoilState(todoState) // 追加
+  const todos = useRecoilValue(completedTodoListState)
+  const setTodos = useSetRecoilState(todoState)
 
-  // ↓ 追加
   const handleToggleButtonClick = useCallback(
     (id) => {
       axios
@@ -41,11 +40,8 @@ export const Completed = () => {
     },
     [todos, setTodos]
   )
-  // ↑ 追加
-
-  // ↓ 追加
   useEffect(() => {
-    console.log(todos)
+    // console.log(todos)
     axios
       .get('http://localhost:3000/todo')
       .then(({ data }) => {
@@ -55,7 +51,6 @@ export const Completed = () => {
         errorToast(error.message)
       })
   }, [setTodos])
-  // ↑ 追加
 
   return (
     <Layout>
