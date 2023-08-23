@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -11,13 +13,16 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  // const [todos, setTodos] = useState([])
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+ 
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
@@ -48,7 +53,7 @@ export const Top = () => {
         errorToast(error.message)
       })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
   // 編集する
   const handleEditedTodoSubmit = useCallback(
@@ -61,6 +66,7 @@ export const Top = () => {
             title: '',
             description: '',
           });
+          // ここに更新した時に全取得するコードを書いてほしい
           setEditTodoId('')
         })
         .catch((error) => {
@@ -76,7 +82,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
   const handleEditButtonClick = useCallback(
     (id) => {
@@ -109,22 +115,25 @@ export const Top = () => {
               break
         }
       })
-  }, [])
+    },
+    [setTodos]
+  )
   // 完了・未完了の切り替え
   const handleToggleButtonClick = useCallback(
     (id) => {
-      console.log(todos)
+      console.log(todos, "axiosの前")
       const todoToUpdate = todos.find((todo) => todo.id === id);
-      const updatedCompletionStatus = !todoToUpdate.isCompleted;
+      const updatedCompletionStatus = todoToUpdate.isCompleted;
 
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: updatedCompletionStatus,
         })
         .then(({ data }) => {
-          // console.log(data)
+          console.log(data, "thenの中")
           const updatedTodos = todos.map((todo) =>
-          todo.id === data.id ? { ...todo, isCompleted: !data.isCompleted } : todo);
+          // ここ↓を短縮して書きたい
+          todo.id === data.id ? data:todo);
           setTodos(updatedTodos); // stateを更新
         })
         .catch((error) => {
@@ -151,7 +160,7 @@ export const Top = () => {
     .catch((error) => {
       errorToast(error.message)
     })
-  }, [inputValues]);
+  }, [setTodos]);
 
   return (
     <Layout>
