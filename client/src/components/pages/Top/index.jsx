@@ -66,8 +66,7 @@ export const Top = () => {
             description: '',
           });
           // 更新した時に全取得するコード↓
-          const upDateList = todos.map((todo) =>
-          todo.id === data.id ? data:todo);
+          const upDateList = todos.map((todo) => todo.id === data.id ? data : todo);
           setTodos(upDateList); // stateを更新
           setEditTodoId('')
         })
