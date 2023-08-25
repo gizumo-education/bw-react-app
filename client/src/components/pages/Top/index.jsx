@@ -69,7 +69,7 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           const updateTodos = todos.map((todo) =>
-          todo.id === editTodoId ? data : todo)
+            todo.id === editTodoId ? data : todo)
           console.log(data)
           setTodos(updateTodos)
           setEditTodoId(false);
@@ -79,24 +79,42 @@ export const Top = () => {
   )
 
   const handleEditButtonClick = useCallback((id) => {
-  const targetTodo = todos.find((todo) => todo.id === id);
+    const targetTodo = todos.find((todo) => todo.id === id);
 
-  setIsAddTaskFormOpen(false);
-  setEditTodoId(id);
+    setIsAddTaskFormOpen(false);
+    setEditTodoId(id);
 
-  setInputValues({
-    title: targetTodo.title,
-    description: targetTodo.description,
-  });
-}, [todos]);
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    });
+  }, [todos]);
 
-// 消去の記述
-const handleDeleteButtonClick = useCallback((id) => {
-    axios.delete(`http://localhost:3000/todo/${id}`).then(({data}) => {
+  // 消去の記述
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
       console.log(data);
       setTodos(data);
-    })
-}, [setTodos]);
+    });
+  }, []);
+
+  // 完了未完了の記述
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          // 下記追記
+          const getCompleted = todos.map((todo) => todo.id === id ? data : todo);
+          setTodos(getCompleted);
+          // 上記追記
+        })
+    },
+    [todos]
+  )
 
   return (
     <Layout>
@@ -123,6 +141,8 @@ const handleDeleteButtonClick = useCallback((id) => {
               onEditButtonClick={handleEditButtonClick}
               // 消去の記述
               onDeleteButtonClick={handleDeleteButtonClick}
+              // 完了未完了の記述
+              onToggleButtonClick={handleToggleButtonClick}
             />
           );
         })}
