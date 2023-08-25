@@ -1,20 +1,39 @@
-import { useState, useEffect, useCallback } from 'react' // レンダリングするのを防ぐことができるuseEffect、useState、useCallback
-import { axios } from '../../../utils/axiosConfig' // API取得インポート
+// レンダリングするのを防ぐことができるuseEffect、useState、useCallback
+import { useState, useEffect, useCallback } from 'react'
+
+// API取得インポート
+import { axios } from '../../../utils/axiosConfig'
 
 import { Layout } from '../../ui/Layout'
-import { ListItem } from '../../ui/ListItem' // APIで取得した、3つのToDoを表示するためのコンポーネント
+// APIで取得した、ToDoリスト表示するためのコンポーネント
+import { ListItem } from '../../ui/ListItem'
 
-import { Button } from '../../ui/Button' // ボタンのコンポーネント
-import { Icon } from '../../ui/Icon' // アイコンのコンポーネント
-import { Form } from '../../ui/Form' // フォームのコンポーネント
+// ボタンのコンポーネント
+import { Button } from '../../ui/Button'
+
+// アイコンのコンポーネント
+import { Icon } from '../../ui/Icon'
+
+// フォームのコンポーネント
+import { Form } from '../../ui/Form'
+
+// エラーハンドリング
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
 export const Top = () => {
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
-      setTodos(data); // setTodosの呼び出しでtodosステートにデータをセット
-    });
+      // console.log(data)
+      // setTodosの呼び出しでtodosステートにデータをセット
+      setTodos(data);
+    })
+      // 下記APIからレスポンスが返ってこない場合
+      .catch((error) => {
+        errorToast(error.message)
+      })
+    // 上記APIからレスポンスが返ってこない場合
   }, []);
 
   const [todos, setTodos] = useState([])
@@ -46,6 +65,7 @@ export const Top = () => {
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
 
+  // 新規作成の記述
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -57,11 +77,17 @@ export const Top = () => {
           title: '',
           description: '',
         });
-      });
+      })
+        // APIからレスポンスが返ってこない場合
+        .catch((error) => {
+          errorToast(error.message)
+        });
+      // 上記APIからレスポンスが返ってこない場合
     },
     [inputValues]
   )
 
+  // 編集の記述
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -74,6 +100,22 @@ export const Top = () => {
           setTodos(updateTodos)
           setEditTodoId(false);
         })
+        // 下記エラーハンドリング追記
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            // 下記APIからレスポンスが返ってこない場合
+            default:
+              errorToast(error.message)
+              break
+            // 上記APIからレスポンスが返ってこない場合
+          }
+        })
+      // 上記エラーハンドリング追記
     },
     [editTodoId, inputValues]
   )
@@ -95,7 +137,23 @@ export const Top = () => {
     axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
       console.log(data);
       setTodos(data);
-    });
+    })
+      // 下記はエラーハンドリングの追記
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          // 下記APIからレスポンスが返ってこない場合
+          default:
+            errorToast(error.message)
+            break
+          // 上記APIからレスポンスが返ってこない場合
+        }
+      })
+    // 上記はエラーハンドリングの追記
   }, []);
 
   // 完了未完了の記述
@@ -112,6 +170,22 @@ export const Top = () => {
           setTodos(getCompleted);
           // 上記追記
         })
+        // 下記はエラーハンドリングの追記
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            // 下記APIからレスポンスが返ってこない場合
+            default:
+              errorToast(error.message)
+              break
+            // 上記APIからレスポンスが返ってこない場合
+          }
+        })
+      // 上記はエラーハンドリングの追記
     },
     [todos]
   )
@@ -138,6 +212,7 @@ export const Top = () => {
             <ListItem
               key={todo.id}
               todo={todo}
+              // 編集の記述
               onEditButtonClick={handleEditButtonClick}
               // 消去の記述
               onDeleteButtonClick={handleDeleteButtonClick}

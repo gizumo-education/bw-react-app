@@ -1,3 +1,4 @@
+// todoアプリ作成
 import PropTypes from 'prop-types'
 import { memo } from 'react'
 import { Button } from '../Button'
@@ -74,6 +75,7 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
   )
 })
 
+// todoアプリ作成
 ListItem.displayName = 'ListItem'
 ListItem.propTypes = {
   todo: PropTypes.shape({
@@ -81,6 +83,7 @@ ListItem.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
     isCompleted: PropTypes.bool.isRequired,
+    // ここまでtodoアプリ作成の記述
   }).isRequired,
   onEditButtonClick: PropTypes.func.isRequired,
   // 下記消去
