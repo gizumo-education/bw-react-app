@@ -115,6 +115,26 @@ export const Top = () => {
     });
   }, [])
 
+  // 切り替えボタンをクリックした時にToDoの完了・未完了を切り替える処理＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          // 切り替え後のToDoの完了・未完了の状態を画面に反映させる処理
+          setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+          )
+        );
+        console.log(data)
+        })
+    },
+    [todos]
+  )
+
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
@@ -141,6 +161,7 @@ export const Top = () => {
             todo={todo}
             onEditButtonClick={handleEditButtonClick}
             onDeleteButtonClick={handleDeleteButtonClick}
+            onToggleButtonClick={handleToggleButtonClick}
           />
         })}
 
