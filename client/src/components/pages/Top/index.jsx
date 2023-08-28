@@ -80,7 +80,7 @@ export const Top = () => {
     },
     [editTodoId, inputValues]
   )
-
+  // Todoの追加
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
@@ -90,6 +90,14 @@ export const Top = () => {
       description: targetTodo.description,
     })
   }, [todos])
+
+  // ToDoの削除
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`).then((response) => {
+      setTodos((prevTodos) => prevTodos.filter(todo => todo.id !== id))
+      console.log(`$id`)
+    })
+  }, [])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -123,6 +131,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
