@@ -98,6 +98,18 @@ export const Top = () => {
       console.log(`$id`)
     })
   }, [])
+  // ToDoの完了・未完了切り替え機能の実装
+  const handleToggleButtonClick = useCallback((id) => {
+    axios.patch(`http://localhost:3000/todo/${id}/completion-status`, {
+      isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+    }).then(({ data }) => {
+      setTodos((prevTodos) => prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+      ))
+      console.log(data)
+    })
+  }, [todos]
+  )
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -105,8 +117,6 @@ export const Top = () => {
       console.log(data)
     })
   }, [])
-
-
 
   return (
     <Layout>
@@ -132,6 +142,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
