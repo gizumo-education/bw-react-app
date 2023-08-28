@@ -39,9 +39,15 @@ export const Top = () => {
       event.preventDefault()
       // axiosのpostメソッドの第一引数にはAPIのURLを指定し、第二引数には送信するデータを指定します
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        setInputValues(data)
-        setIsAddTaskFormOpen(false)
-        console.log(data)
+        // 新しいToDoを追加
+        setTodos((prevTodos) => [...prevTodos, data]);
+        // ToDoフォームを非表示
+        setIsAddTaskFormOpen(false);
+        // 入力値クリア
+        setInputValues({
+          title: '',
+          description: '',
+        });
       })
     },
     [inputValues]
