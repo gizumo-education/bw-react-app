@@ -107,6 +107,14 @@ export const Top = () => {
     })
   }, [todos])
 
+  // ToDoの削除ボタンをクリックした時に実行する関数 練習問題＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`).then(() => {
+      // 削除が成功した場合、ToDo一覧から削除したToDoを除いた新しい一覧を設定する
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    });
+  }, [])
+
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
@@ -132,6 +140,7 @@ export const Top = () => {
             key={todo.id}
             todo={todo}
             onEditButtonClick={handleEditButtonClick}
+            onDeleteButtonClick={handleDeleteButtonClick}
           />
         })}
 
