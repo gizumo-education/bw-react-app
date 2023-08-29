@@ -83,21 +83,19 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
+          console.log(data)
           // ▼練習問題３＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▼
-          setTodos((prevTodos) => {
-            // 編集対象のToDoを探してその内容を更新
-            const updatedTodos = prevTodos.map((todo) => {
-              if (todo.id === editTodoId) {
-                return {
+          setTodos((prevTodos) =>
+            prevTodos.map((todo) =>
+              todo.id === data.id
+                ? {
                   ...todo,
                   title: data.title,
                   description: data.description,
                 }
-              }
-              return todo
-            })
-            return updatedTodos
-          })
+                : todo
+            )
+          )
 
           // ToDoの編集フォームを非表示に
           setEditTodoId('')
@@ -133,9 +131,10 @@ export const Top = () => {
 
   const handleDeleteButtonClick = useCallback((id) => {
     // ▼ToDoの削除ボタンをクリックした時に実行する関数 練習問題４＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▼
-    axios.delete(`http://localhost:3000/todo/${id}`).then(() => {
-      // 削除が成功した場合、ToDo一覧から削除したToDoを除いた新しい一覧を設定する
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    axios.delete(`http://localhost:3000/todo/${id}`).then((data) => {
+      // 削除が成功した場合、レスポンスのdataの値をsetTodosに反映
+      setTodos(data.data);
+      console.log(data)
     })
       // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
       .catch((error) => {
@@ -163,10 +162,10 @@ export const Top = () => {
           // ▼練習問題切り替え後のToDoの完了・未完了の状態を画面に反映させる処理＊＊＊＊＊＊＊＊＊＊＊＊▼
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+              todo.id === data.id ? { ...todo, isCompleted: data.isCompleted } : todo
             )
-          );
-          // console.log(data)
+          )
+          console.log(data)
         })
         // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
         .catch((error) => {
