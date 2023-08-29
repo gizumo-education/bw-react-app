@@ -6,10 +6,12 @@ import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
 export const Top = () => {
+  // 取得したToDoの一覧を管理するstate
   const [todos, setTodos] = useState([])
 
   // ToDoの編集フォームの表示・非表示を切り替えるためのstate
@@ -43,24 +45,32 @@ export const Top = () => {
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
 
+  // ToDoの一覧を取得するAPIリクエスト
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
-      console.log(data)
+      // ▼ToDoの一覧を表示する 練習問題１＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▼
+      // console.log(data)
       setTodos(data)
+      // ▲ ＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
     })
+      .catch((error) => {
+        errorToast(error.message)
+      })
   }, [])
 
-  // 追加したToDoが一覧に表示される 練習問題＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+  // 追加したToDoが一覧に表示される処理
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
+        // ▼練習問題２＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▼
         // 追加したToDoが一覧に表示される処理
         setTodos((prevTodos) => [...prevTodos, data]);
         // ToDoの追加フォームを非表示にする
         setIsAddTaskFormOpen(false)
         // ToDoの追加フォームの入力欄を空にする
-        setInputValues('')
+        setInputValues({ title: '', description: '' })
+        // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
       })
     },
     [inputValues]
@@ -73,7 +83,7 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          // 編集したToDoのタイトルと説明をToDoの一覧に反映させる処理＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+          // ▼練習問題３＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▼
           setTodos((prevTodos) => {
             // 編集対象のToDoを探してその内容を更新
             const updatedTodos = prevTodos.map((todo) => {
@@ -92,6 +102,19 @@ export const Top = () => {
           // ToDoの編集フォームを非表示に
           setEditTodoId('')
         })
+        // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [editTodoId, inputValues]
   )
@@ -107,15 +130,29 @@ export const Top = () => {
     })
   }, [todos])
 
-  // ToDoの削除ボタンをクリックした時に実行する関数 練習問題＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
   const handleDeleteButtonClick = useCallback((id) => {
+    // ▼ToDoの削除ボタンをクリックした時に実行する関数 練習問題４＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▼
     axios.delete(`http://localhost:3000/todo/${id}`).then(() => {
       // 削除が成功した場合、ToDo一覧から削除したToDoを除いた新しい一覧を設定する
       setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-    });
+    })
+      // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
   }, [])
 
-  // 切り替えボタンをクリックした時にToDoの完了・未完了を切り替える処理＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+  // 切り替えボタンをクリックした時にToDoの完了・未完了を切り替える処理
   const handleToggleButtonClick = useCallback(
     (id) => {
       axios
@@ -123,13 +160,26 @@ export const Top = () => {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
-          // 切り替え後のToDoの完了・未完了の状態を画面に反映させる処理
+          // ▼練習問題切り替え後のToDoの完了・未完了の状態を画面に反映させる処理＊＊＊＊＊＊＊＊＊＊＊＊▼
           setTodos((prevTodos) =>
-          prevTodos.map((todo) =>
-            todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-          )
-        );
-        console.log(data)
+            prevTodos.map((todo) =>
+              todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+            )
+          );
+          // console.log(data)
+        })
+        // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [todos]
