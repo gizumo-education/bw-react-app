@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -11,8 +13,9 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  // 取得したToDoの一覧を管理するstate
-  const [todos, setTodos] = useState([])
+  // 取得したToDoの一覧を管理するstate  Recoilの使用
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
 
   // ToDoの編集フォームの表示・非表示を切り替えるためのstate
   const [editTodoId, setEditTodoId] = useState('')
@@ -56,7 +59,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
   // 追加したToDoが一覧に表示される処理
   const handleCreateTodoSubmit = useCallback(
@@ -73,7 +76,7 @@ export const Top = () => {
         // ▲＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊▲
       })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   // 保存ボタンをクリックした時にToDoのタイトルと説明を更新する処理
@@ -110,7 +113,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   // 編集ボタンがクリックされた時にeditTodoIdに編集するToDoのidを格納
@@ -145,7 +148,9 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  },
+    [setTodos]
+  )
 
   // 切り替えボタンをクリックした時にToDoの完了・未完了を切り替える処理
   const handleToggleButtonClick = useCallback(
@@ -177,7 +182,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
 
   return (
