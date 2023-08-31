@@ -88,11 +88,7 @@ export const Top = () => {
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
               todo.id === data.id
-                ? {
-                  ...todo,
-                  title: data.title,
-                  description: data.description,
-                }
+                ? data
                 : todo
             )
           )
@@ -162,7 +158,7 @@ export const Top = () => {
           // ▼練習問題切り替え後のToDoの完了・未完了の状態を画面に反映させる処理＊＊＊＊＊＊＊＊＊＊＊＊▼
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === data.id ? { ...todo, isCompleted: data.isCompleted } : todo
+              todo.id === data.id ? data : todo
             )
           )
           console.log(data)
