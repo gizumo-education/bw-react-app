@@ -73,7 +73,7 @@ export const Top = () => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         console.log(data)
-        setTodos(handleInputChange => [...handleInputChange, data]);
+        setTodos(currentTodos => [...currentTodos, data]); // カレント（現在）トゥードゥス
         setIsAddTaskFormOpen(false);
         setInputValues({
           title: '',
