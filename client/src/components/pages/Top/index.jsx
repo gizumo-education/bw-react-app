@@ -39,6 +39,7 @@ export const Top = () => {
   const [todos, setTodos] = useState([])
   const [editTodoId, setEditTodoId] = useState('')
 
+  // 追加機能記述
   const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
@@ -59,6 +60,7 @@ export const Top = () => {
     });
     setIsAddTaskFormOpen(false)
   }, [])
+  // 追加機能ここまで
 
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
@@ -98,7 +100,7 @@ export const Top = () => {
             todo.id === editTodoId ? data : todo)
           console.log(data)
           setTodos(updateTodos)
-          setEditTodoId(false);
+          setEditTodoId('');
         })
         // 下記エラーハンドリング追記
         .catch((error) => {
