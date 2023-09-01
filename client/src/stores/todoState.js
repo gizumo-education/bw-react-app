@@ -14,7 +14,8 @@ export const completedTodoListState = selector({
 
 export const incompleteTodoListState = selector({
   key: 'incompleteTodoListState',
-  get: () => {
-    return []
+  get: ({ get }) => {
+    // 未完了のToDo一覧を取得する
+    return get(todoState).filter((todo) => !todo.isCompleted);
   },
 })
