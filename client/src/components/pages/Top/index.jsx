@@ -67,10 +67,25 @@ export const Top = () => {
       .delete(`http://localhost:3000/todo/${id}`, id)
       .then(({data}) => {
         setTodos(data);
-        console.log(data);
-        console.log(todos);
       })
   }, [])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          setTodos(
+            todos.map(
+              (todo) => todo.id === data.id ? data:todo
+            )
+          )
+        })
+    },
+    [todos]
+  )
 
   const handleEditedTodoSubmit = useCallback(
     (event) => {
@@ -78,10 +93,10 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          console.log(data)
           setTodos (
             todos.map(
-              (todo) => todo.id === editTodoId ? data:todo)
+              (todo) => todo.id === editTodoId ? data:todo
+            )
           )
           setEditTodoId('')
         })
@@ -119,6 +134,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
