@@ -82,8 +82,15 @@ export const Top = () => {
   [todos]
   )
 
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`)
+    .then(() => {
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    })
+  }, [])
+
   useEffect(() => {
-    axios.get('http://localhost:3000/todo').then(({ data }) => {
+    axios.get('http://localhost:3000/todo').then(({data}) => {
       setTodos(data)
     })
   }, [])
@@ -111,6 +118,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}

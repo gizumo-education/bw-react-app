@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import { memo } from 'react'
 import { Button } from '../Button'
-import { Icon } from '../Icon' 
+import { Icon } from '../Icon'
 
 import styles from './index.module.css'
 
-export const ListItem = memo(({ todo, onEditButtonClick }) => {
+export const ListItem = memo(
+  ({ todo, onEditButtonClick, onDeleteButtonClick }) => {
   return (
     <li className={styles['list-item']}>
       <div className={styles.task}>
@@ -21,6 +22,12 @@ export const ListItem = memo(({ todo, onEditButtonClick }) => {
       >
         <Icon iconName='edit' color='indigo-blue' size='medium' />
       </Button>
+      <Button
+          buttonStyle='icon-only'
+          onClick={() => onDeleteButtonClick(todo.id)}
+        >
+          <Icon iconName='trash' color='indigo-blue' size='medium' />
+        </Button>
     </div>
     </li>
   )
@@ -35,4 +42,5 @@ ListItem.propTypes = {
     isCompleted: PropTypes.bool.isRequired,
   }).isRequired,
   onEditButtonClick: PropTypes.func.isRequired,
+  onDeleteButtonClick: PropTypes.func.isRequired,
 }
