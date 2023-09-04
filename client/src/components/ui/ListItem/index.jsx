@@ -56,20 +56,38 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
       </div>
 
       <div className={styles['task-action']}>
-        <Button
+        {/* <Button
           buttonStyle='icon-only'
           onClick={() => onEditButtonClick(todo.id)}
         >
           <Icon iconName='edit' color='indigo-blue' size='medium' />
         </Button>
         {/* 下記から消去 */}
-        <Button
+        {/* <Button
           buttonStyle='icon-only'
           onClick={() => onDeleteButtonClick(todo.id)}
         >
           <Icon iconName='trash' color='indigo-blue' size='medium' />
-        </Button>
+        </Button> */}
         {/* 消去終わり */}
+        {/*↓ divタグの中を全て置き換え、完了済みのToDoの場合は表示しないように変更 */}
+        {!todo.isCompleted && (
+          <>
+            <Button
+              buttonStyle='icon-only'
+              onClick={() => onEditButtonClick(todo.id)}
+            >
+              <Icon iconName='edit' color='indigo-blue' size='medium' />
+            </Button>
+            <Button
+              buttonStyle='icon-only'
+              onClick={() => onDeleteButtonClick(todo.id)}
+            >
+              <Icon iconName='trash' color='indigo-blue' size='medium' />
+            </Button>
+          </>
+        )}
+        {/*↑ divタグの中を全て置き換え、完了済みのToDoの場合は表示しないように変更 */}
       </div>
     </li>
   )
@@ -85,9 +103,22 @@ ListItem.propTypes = {
     isCompleted: PropTypes.bool.isRequired,
     // ここまでtodoアプリ作成の記述
   }).isRequired,
-  onEditButtonClick: PropTypes.func.isRequired,
+
+  // ↓ isRequiredを削除
+  // onEditButtonClick: PropTypes.func.isRequired,
+  onEditButtonClick: PropTypes.func,
+
+  // ↓ isRequiredを削除
   // 下記消去
-  onDeleteButtonClick: PropTypes.func.isRequired,
+  // onDeleteButtonClick: PropTypes.func.isRequired,
+  onDeleteButtonClick: PropTypes.func,
+
   // 下記完了未完了
   onToggleButtonClick: PropTypes.func.isRequired,
+}
+
+// ↓ defaultPropsを追加（リコイル）
+ListItem.defaultProps = {
+  onEditButtonClick: () => {},
+  onDeleteButtonClick: () => {},
 }

@@ -20,9 +20,21 @@ import { Form } from '../../ui/Form'
 // エラーハンドリング
 import { errorToast } from '../../../utils/errorToast'
 
+// リコイルを使う時の記述
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+
+// リコイルの処理を最初の地点を記述したコンポーネント
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
+
 import styles from './index.module.css'
 
 export const Top = () => {
+    // const [todos, setTodos] = useState([])
+  // ↓ useStateを削除し、Recoilの使用に変更
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+  // ↑ useStateを削除し、Recoilの使用に変更
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       // console.log(data)
@@ -34,9 +46,8 @@ export const Top = () => {
         errorToast(error.message)
       })
     // 上記APIからレスポンスが返ってこない場合
-  }, []);
+  }, [setTodos]);
 
-  const [todos, setTodos] = useState([])
   const [editTodoId, setEditTodoId] = useState('')
 
   // 追加機能記述
@@ -86,7 +97,8 @@ export const Top = () => {
         });
       // 上記APIからレスポンスが返ってこない場合
     },
-    [inputValues]
+    // ↓ setTodosを追加
+    [setTodos, inputValues]
   )
 
   // 編集の記述
@@ -119,7 +131,8 @@ export const Top = () => {
         })
       // 上記エラーハンドリング追記
     },
-    [editTodoId, inputValues]
+    // ↓ setTodosを追加
+    [setTodos, editTodoId, inputValues]
   )
 
   const handleEditButtonClick = useCallback((id) => {
@@ -156,7 +169,9 @@ export const Top = () => {
         }
       })
     // 上記はエラーハンドリングの追記
-  }, []);
+  },
+  // ↓ setTodosを追加
+  [setTodos]);
 
   // 完了未完了の記述
   const handleToggleButtonClick = useCallback(
@@ -189,7 +204,8 @@ export const Top = () => {
         })
       // 上記はエラーハンドリングの追記
     },
-    [todos]
+    // ↓ setTodosを追加
+    [setTodos, todos]
   )
 
   return (
