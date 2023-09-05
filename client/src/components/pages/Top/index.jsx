@@ -1,45 +1,41 @@
 import { useState, useEffect, useCallback } from 'react'
 import { axios } from '../../../utils/axiosConfig'
-
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 import { errorToast } from '../../../utils/errorToast'
-
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])  //所得したtodoの一覧管理
-  const [editTodoId, setEditTodoId] = useState('') //編集ボタンがクリックされた時に編集するTodoのidを格納
-  const [inputValues, setInputValues] = useState({  //追加フォームに入力された値を保持
+  const [todos, setTodos] = useState([])
+  const [editTodoId, setEditTodoId] = useState('')
+  const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
   })
-  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false) //追加フォームの表示、非表示を切り替える
+  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
+
 
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
-  }, []) //タスクを追加をクリックしたときtrueに
-
+  }, []) //タスクを追加をクリックしたときの処理
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('')
     setIsAddTaskFormOpen(false)
-  }, []) //追加フォームのキャンセルボタンをクリックしたときfalseに
-
+  }, []) //フォームのキャンセルボタンをクリックしたときの処理
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
-  }, [])
-
-  const handleCreateTodoSubmit = useCallback(  //新しいTodoリスト内容を送信
+  }, []) //追加フォームに入力された内容を更新する処理
+  const handleCreateTodoSubmit = useCallback(  //新しいTodoリスト内容を送信し作成
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        setTodos((prevTodos) => [...prevTodos, data]) //直前のデータを保持
+        setTodos((prevTodos) => [...prevTodos, data])
         setIsAddTaskFormOpen(false)
         setInputValues({
           title: '',
@@ -52,7 +48,6 @@ export const Top = () => {
     },
     [inputValues]
   )
-
   const handleEditedTodoSubmit = useCallback(  //編集 Todoのタイトル、説明を更新
     (event) => {
       event.preventDefault()
@@ -61,7 +56,7 @@ export const Top = () => {
         .then(({ data }) => {
           setTodos((prevTodos) =>
           prevTodos.map((todo) =>
-            todo.id === editTodoId ? { ...todo, ...inputValues } : todo
+            todo.id === editTodoId ? {...data} : todo      //修正済
           ))
           setEditTodoId('')
           setInputValues({
@@ -86,9 +81,7 @@ export const Top = () => {
     },
     [editTodoId, inputValues]
   )
-
-
-  const handleEditButtonClick = useCallback((id) => {
+  const handleEditButtonClick = useCallback((id) => {  //編集ボタンがクリックされたときの処理
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
     const targetTodo = todos.find((todo) => todo.id === id)
@@ -99,11 +92,12 @@ export const Top = () => {
   },
   [todos]
   )
-
-  const handleDeleteButtonClick = useCallback((id) => {   //削除した時のイベントハンドラ
+  const handleDeleteButtonClick = useCallback((id) => {   //削除
     axios.delete(`http://localhost:3000/todo/${id}`)
-    .then(() => {
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    .then((response) => {
+      if (response.status === 200) {
+        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));  //修正済
+      }
     })
     .catch((error) => {
       switch (error.statusCode) {
@@ -120,17 +114,16 @@ export const Top = () => {
       }
     })
   }, [])
-
   const handleToggleButtonClick = useCallback(  //切り替えボタンをクリックした時の処理
     (id) => {
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
-        .then(() => {
+        .then(({data}) => {
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
-              todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+              todo.id === id ? { ...todo, isCompleted: data.isCompleted } : todo   // 修正済
             )
           );
         })
@@ -165,7 +158,7 @@ export const Top = () => {
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
-          if (editTodoId === todo.id) {
+          if (editTodoId === todo.id) {        //編集、表示、非表示の切り替え
             return (
               <li key={todo.id}>
                 <Form
