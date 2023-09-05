@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
-
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
@@ -12,8 +13,9 @@ import styles from './index.module.css'
 
 export const Top = () => {
   // todosはToDoの一覧を管理するためのstateなので、初期値は空の配列
-  const [todos, setTodos] = useState([])
-
+  // const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     // inputValuesのtitleでタスク名、descriptionでタスクの説明を保持して、ToDoの追加時に使用
@@ -63,7 +65,7 @@ export const Top = () => {
         errorToast(error.message)
       })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
   // 編集機能の実装
   const handleEditedTodoSubmit = useCallback(
@@ -101,7 +103,7 @@ export const Top = () => {
         }
       })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
   // 編集ボタンがクリックされた時に、handleEditButtonClick関数が実行され、editTodoIdに編集するToDoのidを格納する。
   const handleEditButtonClick = useCallback((id) => {
@@ -132,7 +134,8 @@ export const Top = () => {
           break
       }
     })
-  }, [])
+  }, [setTodos])
+
   // ToDoの完了・未完了切り替え機能の実装
   const handleToggleButtonClick = useCallback((id) => {
     axios.patch(`http://localhost:3000/todo/${id}/completion-status`, {
@@ -154,7 +157,7 @@ export const Top = () => {
           break
       }
     })
-  }, [todos]
+  }, [todos, setTodos]
   )
 
   useEffect(() => {
@@ -166,7 +169,7 @@ export const Top = () => {
     }).catch((error) => {
       errorToast(error.message)
     })
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
