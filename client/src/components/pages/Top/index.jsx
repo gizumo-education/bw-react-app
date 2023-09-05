@@ -48,7 +48,7 @@ export const Top = () => {
     },
     [inputValues]
   )
-  const handleEditedTodoSubmit = useCallback(  //編集 Todoのタイトル、説明を更新
+  const handleEditedTodoSubmit = useCallback(  //todoの編集内容を送信
     (event) => {
       event.preventDefault()
       axios
