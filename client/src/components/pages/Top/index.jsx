@@ -31,7 +31,7 @@ export const Top = () => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, []) //追加フォームに入力された内容を更新する処理
-  const handleCreateTodoSubmit = useCallback(  //新しいTodoリスト内容を送信し作成
+  const handleCreateTodoSubmit = useCallback(  //新しいTodoリストの追加、入力内容を送信し作成
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
@@ -95,9 +95,7 @@ export const Top = () => {
   const handleDeleteButtonClick = useCallback((id) => {   //削除
     axios.delete(`http://localhost:3000/todo/${id}`)
     .then((response) => {
-      if (response.status === 200) {
-        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));  //修正済
-      }
+      setTodos(response.data)
     })
     .catch((error) => {
       switch (error.statusCode) {
