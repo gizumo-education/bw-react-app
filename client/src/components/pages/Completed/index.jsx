@@ -1,4 +1,4 @@
-import { Layout } from '../../../ui/Layout'
+import { Layout } from '../../ui/Layout'
 
 import styles from './index.module.css'
 
