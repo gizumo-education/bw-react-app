@@ -46,7 +46,6 @@ export const Top = () => {
         .post('http://localhost:3000/todo', inputValues)
         .then(({ data }) => {
           setTodos((prev) => [...prev, data])
-          setInputValues({ title: '', description: '' })
           setIsAddTaskFormOpen(false)
         })
         .catch((error) => {
@@ -65,7 +64,6 @@ export const Top = () => {
           setTodos((prev) =>
             prev.map((todo) => (todo.id === data.id ? data : todo))
           )
-          setInputValues({ title: '', description: '' })
           setEditTodoId('')
         })
         .catch((error) => {
