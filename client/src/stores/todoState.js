@@ -2,6 +2,9 @@
 import { atom, selector } from 'recoil'
 
 // useEffectで受け取ったdataを保持している。
+// 読み込まないが更新はされる
+// 理由
+// todoの情報が更新されなければ追加、編集などができない。
 export const todoState = atom({
   // keyは識別するための文字列。
   key: 'todoState',

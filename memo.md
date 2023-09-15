@@ -1,7 +1,7 @@
 ## Global State と Local State
 
-- Local State: コンポーネント内に閉じられた状態
-- Global State: アプリケーション全体で共有したい状態
+- Local State: コンポーネント内に閉じられた状態 = そのコンポーネント内でしか参照できない
+- Global State: アプリケーション全体で共有したい状態 = 複数のコンポーネントで参照できる。
 
 ## Recoil について
 

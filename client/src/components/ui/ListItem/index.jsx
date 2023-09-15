@@ -55,6 +55,7 @@ export const ListItem = memo(
 
         <div className={styles['task-action']}>
           {/* falseの時以下のhtml要素を表示する。 */}
+          {/* falseの時の表示とスタイル */}
           {!todo.isCompleted && (
             <>
               <Button
@@ -62,6 +63,10 @@ export const ListItem = memo(
                 // onEditButtonClickは引数にtodo.idが入って実行される関数だから
                 // 関数名だけを渡してもエラーが発生する。
                 // 一致していたら<Form />が表示される。
+                // 更新された時に実行されたくないから。
+                // 例 onEditButtonClick()だとこのコンポーネント内で更新がかかった場合に
+                // 実行されてしまう。= 今回でいうとクリックされた時に実行して欲しいのに
+                // クリックされなくても実行してしまう。
                 onClick={() => onEditButtonClick(todo.id)}
               >
                 <Icon iconName='edit' color='indigo-blue' size='medium' />
