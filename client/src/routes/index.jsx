@@ -13,7 +13,7 @@ import { Completed } from '../components/pages/Completed'
 // ページを増やしたい時は配列の中にオブジェクトを追加し、pathとelementを
 // 適切に指定する。
 export const router = createBrowserRouter([
-  // 配列にpathとelementのプロパティを持っている。pathと
+  // 配列にpathとelementのプロパティを持っている。
   // 指定したpathにelementで指定したコンポーネントが表示される。= urlとコンポーネント紐付け
   // (切り替わる？)
   // layoutフォルダのindex.htmlにheaderコンポーネントと

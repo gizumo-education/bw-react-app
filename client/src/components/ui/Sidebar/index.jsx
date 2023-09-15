@@ -34,6 +34,7 @@ export const Sidebar = memo(() => {
           {/*
             現在のurlとnavlinkコンポーネントのpropsであるtoの値が一致している場合
             activeクラスが付与される仕組みになっている。
+            もう少し詳しく知りたい。
           */}
           {NaviList.map((list) => {
             return (

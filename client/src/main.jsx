@@ -13,9 +13,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <RecoilRoot>
     <ToastContainer />
     {/* 
+      エントリーポイント
       RouterProviderコンポーネントはReactRouterのルーティングを適応するためのコンポーネント
       RouterProviderコンポーネントにrouterpropsに先ほど作成した、ルーティング設定を渡すこと
       でルーティングの設定が適応される。
+      exportされているのでimportで呼び出しrouterに渡してあげる。
     */}
 
     <RouterProvider router={router} />
