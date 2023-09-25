@@ -22,7 +22,7 @@ export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
           placeholder='説明'
           value={value.description}
           onChange={onChange}
-          className={styales['input-discription']}
+          className={styles['input-description']}
         />
       </div>
 
