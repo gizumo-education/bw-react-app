@@ -26,6 +26,35 @@ export const Top = () => {
     setIsAddTaskFormOpen(true)
   },[])
 
+  // キャンセルボタンをクリックした時
+  const handleCancelButtonClick = useCallback(() => {
+    setIsAddTaskFormOpen(false)
+  },[])
+
+  // フォームに入力した値をinputValuesに反映
+  const handleInputChange = useCallback((event) => {
+    const { name, value } = event.target
+    setInputValues((prev) => ({...prev, [name]: value }))
+  })
+
+  // 追加処理の実装
+  const handleCreateTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios.post('http://localhost:3000/todo', inputValues).then(({ data }) =>{
+        console.log(data)
+        setTodos((prev) => [...prev, data])
+        setIsAddTaskFormOpen(false)
+        // ? ↓もっと簡単な書き方ある？
+        setInputValues({
+          title: '',
+          description: '',
+        })
+      })
+    },
+    [inputValues]
+  )
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       console.log(data)
@@ -43,7 +72,12 @@ export const Top = () => {
         })}
         <li>
           {isAddTaskFormOpen ? (
-            <Form value={inputValues} />
+            <Form
+              value={inputValues}
+              onChange={handleInputChange}
+              onCancelClick={handleCancelButtonClick}
+              onSubmit={handleCreateTodoSubmit}
+            />
           ) : (
             <Button
               buttonStyle='indigo-blue'
