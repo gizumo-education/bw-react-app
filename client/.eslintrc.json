@@ -29,6 +29,7 @@
     "react/function-component-definition": "off",
     "react/button-has-type": "off",
     "react/jsx-props-no-spreading": "off",
-    "jsx-a11y/no-autofocus": "off"
+    "jsx-a11y/no-autofocus": "off",
+    "react/prop-types": "off"
   }
 }
