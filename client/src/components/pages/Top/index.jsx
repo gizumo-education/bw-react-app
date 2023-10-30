@@ -23,7 +23,7 @@ export const Top = () => {
 
 
   const handleAddTaskButtonClick = useCallback(() => {
-    setInputValues({title: '', description: ''})
+    setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTasksFormOpen(true)
   }, [])
@@ -33,9 +33,9 @@ export const Top = () => {
     setIsAddTasksFormOpen(false)
   }, [])
 
-  const handleInputChange = useCallback((event) => {
-    const {name, value} = event.target
-    setInputValues((prev) => ({ ...prev, [name]: value }))
+  const handleInputChange = useCallback( event => {
+    const { name, value } = event.target
+    setInputValues( prev => ({ ...prev, [name]: value }))
   }, [])
   
   const handleCreateTodoSubmit = useCallback(
@@ -44,7 +44,7 @@ export const Top = () => {
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         setIsAddTasksFormOpen(false)
         setInputValues('')
-        setTodos([...todos, data])
+        setTodos([ ...todos, data ])
       }).catch(error => {
         errorToast(error.message)
       })
@@ -57,14 +57,8 @@ export const Top = () => {
       event.preventDefault()
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
-        .then(({data}) => {
-          const updateTodos = todos.map(todo => {
-            if(todo.id === data.id){
-              const {title, description} = data
-              return {...todo, title, description}
-            }
-            return todo
-          })
+        .then(({ data }) => {
+          const updateTodos = todos.map(todo => todo.id === editTodoId ? { ...data } : { ...todo })
           setTodos(updateTodos)
           setEditTodoId('')
         }).catch(error => {
@@ -84,7 +78,7 @@ export const Top = () => {
     [editTodoId, inputValues]
   )
 
-  const handleDeleteButtonClick = useCallback(id => {
+  const handleDeleteButtonClick = useCallback( id => {
     axios
       .delete(`http://localhost:3000/todo/${id}`)
       .then(data => {
@@ -132,7 +126,7 @@ export const Top = () => {
       })
   },[todos])
 
-  const handleEditButtonClick = useCallback((id) => {
+  const handleEditButtonClick = useCallback( id => {
     setIsAddTasksFormOpen(false)
     setEditTodoId(id)
 
