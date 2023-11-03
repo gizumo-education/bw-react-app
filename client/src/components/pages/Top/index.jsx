@@ -62,7 +62,8 @@ export const Top = () => {
     })
   }, [todos])
 
-  const handleDeleteButtonClick = useCallback((id) => {
+  const handleDeleteButtonClick = useCallback(
+    (id) => {
     axios
     .delete(`http://localhost:3000/todo/${id}`)
     .then((data) => {
@@ -71,6 +72,30 @@ export const Top = () => {
       setTodos(remainTodo)
     })
   }, [todos])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          console.log(data)
+          const checkedTodos = todos.map((todo) => {
+            if (todo.id === id) {
+              return {
+                ...todo,
+                ...data,
+              }
+            }
+            return todo
+          })
+          setTodos(checkedTodos)
+        })
+    },
+    [todos]
+  )
 
 
   const handleEditedTodoSubmit = useCallback(
@@ -127,7 +152,8 @@ export const Top = () => {
             key={todo.id}
             todo={todo}
             onEditButtonClick={handleEditButtonClick}
-            onDeleteButtonClick={handleDeleteButtonClick} 
+            onDeleteButtonClick={handleDeleteButtonClick}
+            onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
