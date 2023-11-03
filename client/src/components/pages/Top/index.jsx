@@ -62,6 +62,17 @@ export const Top = () => {
     })
   }, [todos])
 
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios
+    .delete(`http://localhost:3000/todo/${id}`)
+    .then((data) => {
+      console.log(data)
+      const remainTodo = todos.filter((todo) => todo.id !== id)
+      setTodos(remainTodo)
+    })
+  }, [todos])
+
+
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -116,6 +127,7 @@ export const Top = () => {
             key={todo.id}
             todo={todo}
             onEditButtonClick={handleEditButtonClick}
+            onDeleteButtonClick={handleDeleteButtonClick} 
             />
           )
         })}
