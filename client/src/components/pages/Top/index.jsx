@@ -75,8 +75,8 @@ export const Top = () => {
             return prevTodos.map((todo) => {
               if (todo.id === editTodoId) {
                 return {
-                  title: inputValues.title,
-                  description: inputValues.description,
+                  title: data.title,
+                  description: data.description,
                 };
               }
               return todo;
@@ -150,7 +150,7 @@ export const Top = () => {
           setTodos((prevTodos) => {
             return prevTodos.map((todo) => {
               if (todo.id === id) {
-                return { ...todo, isCompleted: !todo.isCompleted };
+                return { ...todo, isCompleted: data.isCompleted };
               }
               return todo;
             })
