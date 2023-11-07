@@ -19,7 +19,7 @@ export const Top = () => {
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
-// 追加フォームを表示
+  // 追加フォームを表示
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
@@ -39,7 +39,7 @@ export const Top = () => {
       setInputValues((prev) => ({ ...prev, [name]: value }))
     }, [])
 
-    
+  // 追加フォームから新たに内容が追加されたら
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -62,6 +62,7 @@ export const Top = () => {
     [inputValues]
   )
 
+  // 編集フォームから内容が更新されたら
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -69,6 +70,20 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
+          // Section16問１（編集したToDoを更新）
+          setTodos((prevTodos) => {
+            return prevTodos.map((todo) => {
+              if (todo.id === editTodoId) {
+                return {
+                  title: inputValues.title,
+                  description: inputValues.description,
+                };
+              }
+              return todo;
+            });
+          });
+          // Section16問２（編集ページを非表示）
+          setEditTodoId('');
         })
         .catch((error) => {
           switch (error.statusCode) {
@@ -82,24 +97,10 @@ export const Top = () => {
               break
           }
         })
-
-      // Section16問１（編集したToDoを更新）
-      setTodos((prevTodos) => {
-        return prevTodos.map((todo) => {
-          if (todo.id === editTodoId) {
-            return {
-              title: inputValues.title,
-              description: inputValues.description,
-            };
-          }
-          return todo;
-        });
-      });
-      // Section16問２（編集したら編集ページを非表示）
-      setEditTodoId('');
     }, [editTodoId, inputValues]
   )
 
+  // 編集ボタンが押されたら
   const handleEditButtonClick = useCallback(
     (id) => {
       setIsAddTaskFormOpen(false)
@@ -113,11 +114,13 @@ export const Top = () => {
     [todos]
   )
 
+  // 削除ボタンをクリックしたら
   const handleDeleteButtonClick = useCallback((id) => {
     // Section17
     axios.delete(`http://localhost:3000/todo/${id}`)
-      .then(() => {
-        console.log()
+      .then((data
+) => {
+        console.log(data)
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id))
       })
       .catch((error) => {
@@ -134,6 +137,7 @@ export const Top = () => {
       })
   }, [])
 
+  // 切り替えボタンをクリックしたら
   const handleToggleButtonClick = useCallback(
     (id) => {
       axios
