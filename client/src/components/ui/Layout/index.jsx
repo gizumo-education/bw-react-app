@@ -1,3 +1,6 @@
+// ヘッダーとサイドバーの表示
+// propsのchildrenで受け取ったものをメインコンテンツとして表示
+
 import PropTypes from 'prop-types'
 import { memo } from 'react'
 
