@@ -19,16 +19,18 @@ export const Top = () => {
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
-  // 追加フォームを表示
+  // フォームを表示
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
 
-  // 追加フォームを非表示
+  // フォームを非表示
   const handleCancelButtonClick = useCallback(() => {
+// 編集フォームを非表示
     setEditTodoId('')
+// 追加フォームを非表示
     setIsAddTaskFormOpen(false)
   }, [])
 
