@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -12,7 +14,9 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+  
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     title: '',
@@ -49,7 +53,7 @@ export const Top = () => {
         errorToast(error.message)
       })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   const handleEditedTodoSubmit = useCallback(
@@ -75,7 +79,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   const handleDeleteButtonClick = useCallback( id => {
@@ -91,12 +95,12 @@ export const Top = () => {
             )
             break
 
-          default: 
+          default:
             errorToast(error.message)
             break
         }
       })
-  }, [todos])
+  }, [setTodos])
 
   const handleToggleButtonClick = useCallback(id => {
     axios
@@ -104,13 +108,10 @@ export const Top = () => {
         isCompleted: todos.find(todo => todo.id === id).isCompleted,
       })
       .then(({ data }) => {
-        const updateTodos = todos.map(todo => {
-          if(todo.id === data.id) {
-            todo.isCompleted = !todo.isCompleted
-          }
-          return todo
-        })
-        setTodos(updateTodos)
+        setTodos( prev =>
+          prev.map( todo =>
+            (todo.id === data.id ? data : todo)))
+        // そっか、どうせaxiosで変更されたあとのオブジェクトが帰ってくるんだから、それを代入すればいいだけじゃんとおもいました。
       }).catch(error => {
         switch(error.statusCode) {
           case 404:
@@ -124,7 +125,7 @@ export const Top = () => {
             break
         }
       })
-  },[todos])
+  },[todos, setTodos])
 
   const handleEditButtonClick = useCallback( id => {
     setIsAddTasksFormOpen(false)
@@ -145,7 +146,7 @@ export const Top = () => {
     }).catch(error => {
       errorToast(error.message)
     })
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
