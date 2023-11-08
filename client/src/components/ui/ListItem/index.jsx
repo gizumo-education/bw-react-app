@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 import { memo } from "react"
 
 import styles from './index.module.css'
@@ -49,33 +49,42 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
       </div>
 
       <div className={styles['task-action']}>
-        <Button
-          buttonStyle='icon-only'
-          onClick={ () => onEditButtonClick(todo.id) }
-        >
-          <Icon iconName='edit' color='indigo-blue' size='medium' />
-        </Button>
+        {!todo.isCompleted && (
+          <>
+            <Button
+              buttonStyle='icon-only'
+              onClick={ () => onEditButtonClick(todo.id) }
+            >
+              <Icon iconName='edit' color='indigo-blue' size='medium' />
+            </Button>
 
-        <Button
-          buttonStyle='icon-only'
-          onClick= { () => onDeleteButtonClick(todo.id) }
-        >
-          <Icon iconName='trash' color='indigo-blue' size='medium' />
-        </Button>
+            <Button
+              buttonStyle='icon-only'
+              onClick= { () => onDeleteButtonClick(todo.id) }
+            >
+              <Icon iconName='trash' color='indigo-blue' size='medium' />
+            </Button>
+          </>
+        )}
       </div>
     </li>
   )
 })
 
 ListItem.displayName = 'ListItem'
-ListItem.PropTypes = {
-  todo: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    isCompleted: PropTypes.bool.isRequired,
+ListItem.propTypes = {
+  todo: propTypes.shape({
+    id: propTypes.string.isRequired,
+    title: propTypes.string.isRequired,
+    description: propTypes.string,
+    isCompleted: propTypes.bool.isRequired,
   }).isRequired,
-  onEditButtonClick: PropTypes.func.isRequired,
-  onDeleteButtonClick: PropTypes.func.isRequired,
-  onToggleButtonClick: PropTypes.func.isRequired,
+  onEditButtonClick: propTypes.func,
+  onDeleteButtonClick: propTypes.func,
+  onToggleButtonClick: propTypes.func.isRequired,
+}
+
+ListItem.defaultProps = {
+  onEditButtonClick: () => {},
+  onDeleteButtonClick: () => {},
 }
