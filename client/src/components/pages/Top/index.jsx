@@ -66,11 +66,6 @@ export const Top = () => {
           setTodos(newArray)
           setEditTodoId(undefined)
         })
-        // const newArray = array.map((val) => {
-        //   if (編集対象のTODOと編集後のTODOが一致したら) {
-        //     return 編集後のTODO
-        //   }
-        //   return val
         .catch((error) => {
           switch (error.statusCode) {
             case 404:
@@ -97,22 +92,44 @@ export const Top = () => {
  )
 
  const handleDeleteButtonClick = useCallback((id) => {
-
- }, [])
+  console.log(id)
+  //ここに処理を書いてゴミ箱の機能を実装する//
+  //1.APIリクエスト先はhttp://localhost:3000/todo/{id}
+  //2.{id}は削除するToDoのid//
+  //3.HTTPメソッドはDELETEを使用する//
+  axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
+    console.log(data)
+    setTodos(data)
+  })
+ },[])
 
  const handleToggleButtonClick = useCallback(
   (id) => {
+    //ここに処理を書いて実装
+    // 1. mapメソッドを使ってもともとのTODOの配列を一つ一つ繰り返す///
+    //2. 1つ1つをチェックして、編集対象のものに当たった時にという条件式を書く
+    // 3. 2の条件式でtrueになったときそのTODOを更新されたToDoに置き換える//
+    //4.クリックした時に切り替わるような処理を書く//
+
     axios
       .patch(`http://localhost:3000/todo/${id}/completion-status`, {
         isCompleted: todos.find((todo) => todo.id === id).isCompleted,
       })
       .then(({ data }) => {
         console.log(data)
+        const newTodoList = todos.map((todo) => {
+          if(id === todo.id) {
+            return data
+          }else{
+            return todo
+          }
+        })
+        setTodos(newTodoList)
       })
   },
   [todos]
 )
-
+ 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({data}) => {
       console.log(data)
@@ -139,7 +156,7 @@ return (
               </li>
             )
           }
-          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} />
+          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} onToggleButtonClick={handleToggleButtonClick}/>
         })}
         <li>
         {isAddTaskFormOpen ? (
