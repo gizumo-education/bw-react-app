@@ -42,6 +42,9 @@ export const Top = () => {
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         setTodos([...todos, data])
       })
+      .catch((error) => {
+        errorToast(error.message)
+      })
     },
     [inputValues]
   )
@@ -73,6 +76,9 @@ export const Top = () => {
                 '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
               )
               break
+              default:
+                errorToast(error.message)
+                break
           }
         })
     },
@@ -93,6 +99,7 @@ export const Top = () => {
 
  const handleDeleteButtonClick = useCallback((id) => {
   console.log(id)
+  
   //ここに処理を書いてゴミ箱の機能を実装する//
   //1.APIリクエスト先はhttp://localhost:3000/todo/{id}
   //2.{id}は削除するToDoのid//
@@ -100,6 +107,18 @@ export const Top = () => {
   axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
     console.log(data)
     setTodos(data)
+  })
+  .catch((error) => {
+    switch (error.statusCode) {
+      case 404:
+        errorToast(
+          '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+        )
+        break
+        default:
+          errorToast(error.message)
+          break
+    }
   })
  },[])
 
@@ -126,6 +145,18 @@ export const Top = () => {
         })
         setTodos(newTodoList)
       })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+            default:
+              errorToast(error.message)
+              break
+        }
+      })
   },
   [todos]
 )
@@ -134,6 +165,9 @@ export const Top = () => {
     axios.get('http://localhost:3000/todo').then(({data}) => {
       console.log(data)
       setTodos(data)
+    })
+    .catch((error) => {
+      errorToast(error.message)
     })
   }, [])
 
