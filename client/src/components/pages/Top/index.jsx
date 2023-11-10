@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
@@ -11,7 +13,12 @@ import styles from './index.module.css'
 
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  // const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  // 読み取り専用のフック
+  const setTodos = useSetRecoilState(todoState)
+  // 書き込み専用のフック
+
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     title: '',
@@ -61,7 +68,7 @@ export const Top = () => {
           errorToast(error.message)
         })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   // 編集フォームから内容が更新されたら
@@ -99,7 +106,7 @@ export const Top = () => {
               break
           }
         })
-    }, [editTodoId, inputValues]
+    }, [setTodos, editTodoId, inputValues]
   )
 
   // 編集ボタンが押されたら
@@ -113,7 +120,7 @@ export const Top = () => {
         description: targetTodo.description,
       })
     },
-    [todos]
+    [todos,setTodos]
   )
 
   // 削除ボタンをクリックしたら
@@ -137,7 +144,7 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  }, [setTodos])
 
   // 切り替えボタンをクリックしたら
   const handleToggleButtonClick = useCallback(
@@ -171,7 +178,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
 
 
@@ -184,7 +191,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
 
   return (
