@@ -7,11 +7,10 @@ import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
-import { errorToast } from '../../../utils/errorToast' 
+import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-
   const todos = useRecoilValue(incompleteTodoListState)
   const setTodos = useSetRecoilState(todoState)
 
@@ -25,7 +24,7 @@ export const Top = () => {
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
   const handleAddTaskButtonClick = useCallback(() => {
-    setInputValues({ title: '', description: '' }) 
+    setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
@@ -40,25 +39,22 @@ export const Top = () => {
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
 
-  const handleCreateTodoSubmit = useCallback(
-    (event) => {
-      event.preventDefault()
-      axios.post('http://localhost:3000/todo', inputValues)
+  const handleCreateTodoSubmit = useCallback((event) => {
+    event.preventDefault()
+    axios.post('http://localhost:3000/todo', inputValues)
       .then(({ data }) => {
         console.log(data)
-        setTodos((prevTodos) => [ ...prevTodos, data ] )
+        setTodos((prev) => ([...prev,data]) )
         setIsAddTaskFormOpen(false)
         setInputValues({
           title: '',
           description: '',
         })
-      })
+        })
       .catch((error) => {
         errorToast(error.message)
       })
-    },
-    [setTodos, inputValues]
-  )
+    },[setTodos, inputValues])
 
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false)
@@ -70,8 +66,7 @@ export const Top = () => {
     })
   }, [todos])
 
-  const handleDeleteButtonClick = useCallback(
-    (id) => {
+  const handleDeleteButtonClick = useCallback((id) => {
     axios
     .delete(`http://localhost:3000/todo/${id}`)
     .then((res) => {
@@ -90,46 +85,38 @@ export const Top = () => {
           break
       }
     })
-  },
-  [setTodos]
-  )
-
-  const handleToggleButtonClick = useCallback(
-    (id) => {
-      axios
-        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
-          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
-        })
-        .then(({ data }) => {
-          console.log(data)
-          console.log(data)
-          const checkedTodos = todos.map((todo) => {
-            if (todo.id === id) {
-              return {
-                ...todo,
-                ...data,
-              }
+  },[setTodos])
+  const handleToggleButtonClick = useCallback((id) => {
+    axios
+      .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+        isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+      })
+      .then(({ data }) => {
+        console.log(data)
+        const checkedTodos = todos.map((todo) => {
+          if (todo.id === id) {
+            return {
+              ...todo,
+              ...data,
             }
-            return todo
-          })
-          setTodos(checkedTodos)
-        })
-        .catch((error) => {
-          switch (error.statusCode) {
-            case 404:
-              errorToast(
-                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
-              )
-              break
-            default:
-              errorToast(error.message)
-              break
           }
+          return todo
         })
-    },
-    [todos, setTodos]
-  )
-
+        setTodos(checkedTodos)
+      })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
+    },[todos, setTodos])
 
   const handleEditedTodoSubmit = useCallback(
     (event) => {
@@ -138,6 +125,7 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
+          setEditTodoId('')
           const updatedTodo = todos.map((todo) => {
             if (todo.id === editTodoId) {
               return {
@@ -148,7 +136,6 @@ export const Top = () => {
             return todo
           })
           setTodos(updatedTodo)
-          setEditTodoId(false)
         })
         .catch((error) => {
           switch (error.statusCode) {
@@ -163,9 +150,7 @@ export const Top = () => {
         }
         })
         
-    },
-    [setTodos, editTodoId, inputValues]
-  )
+    },[setTodos, editTodoId, inputValues])
   
   useEffect(() => {
     axios.get('http://localhost:3000/todo')
@@ -182,31 +167,31 @@ export const Top = () => {
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
-        {todos.map((todo) => {
-          if (editTodoId === todo.id) {
-            return (
-              <li key={todo.id}>
-                <Form
-                  value={inputValues}
-                  editTodoId={editTodoId}
-                  onChange={handleInputChange}
-                  onCancelClick={handleCancelButtonClick}
-                  onSubmit={handleEditedTodoSubmit} 
-                />
-              </li>
-            )
-          }
-
+      {todos.map((todo) => {
+        if (editTodoId === todo.id){
+          return (
+            <li key={todo.id}>
+              <Form
+                value={inputValues}
+                editTodoId={editTodoId}
+                onChange={handleInputChange}
+                onCancelClick={handleCancelButtonClick}
+                onSubmit={handleEditedTodoSubmit} 
+              />
+            </li>
+          )
+        }
           return(
             <ListItem
-            key={todo.id}
-            todo={todo}
-            onEditButtonClick={handleEditButtonClick}
-            onDeleteButtonClick={handleDeleteButtonClick}
-            onToggleButtonClick={handleToggleButtonClick}
+              key={todo.id}
+              todo={todo}
+              onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
-        })}
+        })
+      }
         <li>
           {isAddTaskFormOpen ? (
             <Form
