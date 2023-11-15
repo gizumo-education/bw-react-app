@@ -93,16 +93,7 @@ export const Top = () => {
       })
       .then(({ data }) => {
         console.log(data)
-        const checkedTodos = todos.map((todo) => {
-          if (todo.id === id) {
-            return {
-              ...todo,
-              ...data,
-            }
-          }
-          return todo
-        })
-        setTodos(checkedTodos)
+        setTodos(todos.map((todo)=> (todo.id === id? data : todo)))
       })
       .catch((error) => {
         switch (error.statusCode) {
@@ -126,16 +117,7 @@ export const Top = () => {
         .then(({ data }) => {
           console.log(data)
           setEditTodoId('')
-          const updatedTodo = todos.map((todo) => {
-            if (todo.id === editTodoId) {
-              return {
-                ...todo,
-                ...data,
-              }
-            }
-            return todo
-          })
-          setTodos(updatedTodo)
+          setTodos(todos.map((todo) => (todo.id === editTodoId ? data : todo)))
         })
         .catch((error) => {
           switch (error.statusCode) {
