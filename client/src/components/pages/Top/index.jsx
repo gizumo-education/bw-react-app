@@ -107,6 +107,29 @@ export const Top = () => {
     })
   }, [])
 
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          const newTodos = todos.map(item => {
+            if(item.id === data.id) {
+              return {...item, isCompleted : item.isCompleted ? false : true }
+            }else {
+              return item
+            }
+          })
+          setTodos(newTodos)
+        })
+        
+    },
+    [todos]
+  )
+
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       // API通信でTodoデータ引っ張り
@@ -144,6 +167,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
