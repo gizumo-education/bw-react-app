@@ -94,6 +94,19 @@ export const Top = () => {
     // ↑ 追加
   }, [todos])
 
+
+
+  const handleDeleteButtonClick = useCallback((id) => {
+    const responseDel = axios.delete(`http://localhost:3000/todo/${id}`)
+    console.log(responseDel)
+    axios.get('http://localhost:3000/todo').then(({ data }) => {
+      // API通信でTodoデータ引っ張り
+      console.log(data)
+      // todoデータ(配列*オブジェクト)をコンソールに表示
+      setTodos(data)
+    })
+  }, [])
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       // API通信でTodoデータ引っ張り
@@ -130,6 +143,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}

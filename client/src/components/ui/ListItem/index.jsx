@@ -6,7 +6,7 @@ import { Icon } from '../Icon' // 追加
 
 import styles from './index.module.css'
 
-export const ListItem = memo(({ todo, onEditButtonClick }) => {
+export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick }) => {
   return (
     <li className={styles['list-item']}>
       <div className={styles.task}>
@@ -25,6 +25,13 @@ export const ListItem = memo(({ todo, onEditButtonClick }) => {
         </Button>
       </div>
       {/* // ↑ 追加 */}
+      <Button
+          buttonStyle='icon-only'
+          onClick={() => onDeleteButtonClick(todo.id)}
+        >
+          <Icon iconName='trash' color='indigo-blue' size='medium' />
+        </Button>
+
     </li>
   )
 })
@@ -38,4 +45,5 @@ ListItem.propTypes = {
     isCompleted: PropTypes.bool.isRequired,
   }).isRequired,
   onEditButtonClick: PropTypes.func.isRequired, // 追加
+  onDeleteButtonClick: PropTypes.func.isRequired,
 }
