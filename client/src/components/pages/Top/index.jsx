@@ -3,6 +3,7 @@ import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button' // 追加
 import { Icon } from '../../ui/Icon' // 追加
 import { Form } from '../../ui/Form' // 追加
+import { errorToast } from '../../../utils/errorToast'
 
 
 import { useState, useEffect, useCallback } from 'react' // 追加
@@ -56,6 +57,11 @@ export const Top = () => {
           setInputValues('')
         })
       })
+        // ↓ 追加
+        .catch((error) => {
+          errorToast(error.message)
+        })
+      // ↑ 追加
     },
     [inputValues]
   )
@@ -75,6 +81,21 @@ export const Top = () => {
             // todoデータ(配列*オブジェクト)をコンソールに表示
             setTodos(data)
           })
+        })
+        // ↓追加
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            // ↓ 追加
+            default:
+              errorToast(error.message)
+              break
+            // ↑ 追加
+          }
         })
 
     },
@@ -105,6 +126,20 @@ export const Top = () => {
       // todoデータ(配列*オブジェクト)をコンソールに表示
       setTodos(data)
     })
+      // ↓ 追加
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          // ↓ 追加
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
   }, [])
 
   const handleToggleButtonClick = useCallback(
@@ -116,15 +151,30 @@ export const Top = () => {
         .then(({ data }) => {
           console.log(data)
           const newTodos = todos.map(item => {
-            if(item.id === data.id) {
-              return {...item, isCompleted : item.isCompleted ? false : true }
-            }else {
+            if (item.id === data.id) {
+              return { ...item, isCompleted: item.isCompleted ? false : true }
+            } else {
               return item
             }
           })
           setTodos(newTodos)
         })
-        
+        // ↓追加
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+              // ↓ 追加
+            default:
+              errorToast(error.message)
+              break
+            // ↑ 追加
+          }
+        })
+
     },
     [todos]
   )
@@ -137,6 +187,11 @@ export const Top = () => {
       // todoデータ(配列*オブジェクト)をコンソールに表示
       setTodos(data)
     })
+    // ↓ 追加
+  .catch((error) => {
+    errorToast(error.message)
+  })
+  // ↑ 追加
   }, [])
 
 
