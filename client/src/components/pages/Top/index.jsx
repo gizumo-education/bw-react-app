@@ -48,14 +48,13 @@ export const Top = () => {
       event.preventDefault()
       // フォームの送信をキャンセル
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        axios.get('http://localhost:3000/todo').then(({ data }) => {
           // API通信でTodoデータ引っ張り
+          // １回目だけでOK
           console.log(data)
           // todoデータ(配列*オブジェクト)をコンソールに表示
-          setTodos(data)
+          setTodos(resdata => [...resdata, data])
           setIsAddTaskFormOpen(false)
           setInputValues('')
-        })
       })
         // ↓ 追加
         .catch((error) => {
@@ -150,9 +149,10 @@ export const Top = () => {
         })
         .then(({ data }) => {
           console.log(data)
+          // 155行目もdetaを使う
           const newTodos = todos.map(item => {
             if (item.id === data.id) {
-              return { ...item, isCompleted: item.isCompleted ? false : true }
+              return data
             } else {
               return item
             }
