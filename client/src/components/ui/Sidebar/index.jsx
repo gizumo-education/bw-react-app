@@ -32,6 +32,7 @@ export const Sidebar = memo(() => {
             return (
               <li className={styles['list-item']} key={list.id}>
                 <NavLink
+                // isActiveはreactプロパティの１種でtrueとfalseで異なるクラスを返すisActiveがパスとURLを比較し、trueかfalseを返す
                   to={list.path}
                   end
                   className={({ isActive }) => {

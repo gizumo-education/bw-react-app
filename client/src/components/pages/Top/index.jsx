@@ -7,11 +7,16 @@ import { errorToast } from '../../../utils/errorToast'
 
 
 import { useState, useEffect, useCallback } from 'react' // 追加
+import { useRecoilValue, useSetRecoilState } from 'recoil' // 追加
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  // ↓ useStateを削除し、Recoilの使用に変更
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+  // ↑ useStateを削除し、Recoilの使用に変更
   const [editTodoId, setEditTodoId] = useState('')
   // 編集ボタン用usestate
   const [inputValues, setInputValues] = useState({
@@ -62,7 +67,7 @@ export const Top = () => {
         })
       // ↑ 追加
     },
-    [inputValues]
+    [setTodos,inputValues]
   )
 
   // ↓ 追加
@@ -98,7 +103,7 @@ export const Top = () => {
         })
 
     },
-    [editTodoId, inputValues]
+    [setTodos,editTodoId, inputValues]
   )
 
   const handleEditButtonClick = useCallback((id) => {
@@ -139,7 +144,7 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  }, [setTodos])
 
   const handleToggleButtonClick = useCallback(
     (id) => {
@@ -192,7 +197,7 @@ export const Top = () => {
     errorToast(error.message)
   })
   // ↑ 追加
-  }, [])
+  }, [setTodos])
 
 
 
