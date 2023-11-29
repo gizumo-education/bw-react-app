@@ -19,4 +19,4 @@ export const incompleteTodoListState = selector({
     const notCompleted = get(todoState)
     return notCompleted.filter((todo) => !todo.isCompleted)
   },
-})
+})se
