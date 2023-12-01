@@ -53,28 +53,34 @@ export const Top = () => {
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
-
       <ul className={styles.list}>
         {todos.map((todo) => {
           return <ListItem key={todo.id} todo={todo} />
         })}
         <li>
-        {isAddTaskFormOpen ? (
-          <Form value={inputValues} onChange={handleInputChange} onCancelClick={handleCancelButtonClick} onSubmit={handleCreateTodoSubmit} /> 
-        ) : (
-          <Button buttonStyle='indigo-blue' onClick={handleAddTaskButtonClick} className={styles['add-task']}>
-            <Icon
-              iconName='plus'
-              color='orange'
-              size='medium'
-              className={styles['plus-icon']}
-            />
-            タスクを追加
-          </Button>
-        )}
-      </li>
+          {isAddTaskFormOpen ? (
+            <Form 
+              value={inputValues} 
+              onChange={handleInputChange} 
+              onCancelClick={handleCancelButtonClick} 
+              onSubmit={handleCreateTodoSubmit} 
+            /> 
+          ) : (
+            <Button buttonStyle='indigo-blue' 
+                    onClick={handleAddTaskButtonClick} 
+                    className={styles['add-task']}
+            >
+              <Icon
+                iconName='plus'
+                color='orange'
+                size='medium'
+                className={styles['plus-icon']}
+              />
+              タスクを追加
+            </Button>
+          )}
+        </li>
       </ul>
-      
     </Layout>
   )
 }
