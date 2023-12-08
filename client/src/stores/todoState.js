@@ -1,5 +1,4 @@
-import { atom, selector, useSetRecoilState } from 'recoil'
-import { Top } from '../components/pages/Top'
+import { atom, selector } from 'recoil'
 
 export const todoState = atom({
   key: 'todoState',
@@ -10,7 +9,7 @@ export const completedTodoListState = selector({
   key: 'completedTodoListState',
   get: ({get}) => {
     const todo =get(todoState)
-    return todo.filter((todo) => todo.isCompleted === true )
+    return todo.filter((todos) => todos.isCompleted )
   },
 })
 
@@ -18,6 +17,6 @@ export const incompleteTodoListState = selector({
   key: 'incompleteTodoListState',
   get: ({get}) => {
     const todo = get(todoState)
-    return todo.filter((todo) => todo.isCompleted === false )
+    return todo.filter((todos) => !todos.isCompleted )
   },
 })
