@@ -36,7 +36,6 @@ export const Top = () => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(() => {
         axios.get('http://localhost:3000/todo').then(({data}) => {
-          // console.log(data);
           setTodos(data)
         })
         setIsAddTaskFormOpen(false)
@@ -56,11 +55,15 @@ export const Top = () => {
       event.preventDefault()
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
-        .then(() => {
-          axios.get('http://localhost:3000/todo').then(({data}) => {
-            setTodos(data)
+        .then((data) => {
+          const newTodos = todos.map((todo) => {
+            if (editTodoId === todo.id) {
+              return data.data
+            }
+            return todo
           })
-          setEditTodoId('')
+          setTodos(newTodos);
+          setEditTodoId('');
         })
         .catch((error) => {
           switch (error.statusCode) {
@@ -109,10 +112,14 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
-        .then(({ }) => {
-          axios.get('http://localhost:3000/todo').then(({data}) => {
-            setTodos(data)
+        .then((data) => {
+          const newTodos = todos.map((todo) => {
+            if (todo.id === id) {
+              return data.data
+            }
+            return todo
           })
+          setTodos(newTodos);
         })
         .catch((error) => {
           switch (error.statusCode) {
@@ -131,7 +138,6 @@ export const Top = () => {
   )
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({data}) => {
-      // console.log(data);
       setTodos(data)
     })
     .catch((error) => {
