@@ -79,6 +79,16 @@ export const Top = () => {
     }, 
     [todos]
   )
+
+  const handleDeleteButtonClick = useCallback(
+    (id) => {
+      axios
+        .delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
+          console.log(data)
+          setTodos(data)
+      })
+    },[])
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       console.log(data)
@@ -104,7 +114,7 @@ export const Top = () => {
               </li>
             )
           }
-          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} />
+          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} />
         })}
         <li>
           {isAddTaskFormOpen ? (
