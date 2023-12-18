@@ -88,6 +88,22 @@ export const Top = () => {
           setTodos(data)
       })
     },[])
+  
+    const handleToggleButtonClick = useCallback(
+      (id) => {
+        axios
+          .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+            isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+          })
+          .then(({ data }) => {
+            console.log(data)
+            setTodos((prev) => 
+              prev.map((todo) => (todo.id === data.id ? data : todo))
+            )
+          })
+      },
+      [todos]
+    )
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -114,7 +130,7 @@ export const Top = () => {
               </li>
             )
           }
-          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} />
+          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} onToggleButtonClick={handleToggleButtonClick}/>
         })}
         <li>
           {isAddTaskFormOpen ? (
