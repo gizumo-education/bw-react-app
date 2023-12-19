@@ -34,15 +34,15 @@ export const Top = () => {
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
-      axios.post('http://localhost:3000/todo', inputValues).then(() => {
-        axios.get('http://localhost:3000/todo').then(({data}) => {
-          setTodos(data)
-        })
-        setIsAddTaskFormOpen(false)
+      axios.post('http://localhost:3000/todo', inputValues)
+      .then(({data}) => {
+        const newTodos = [...todos, data]
+        setTodos(newTodos)
+        setIsAddTaskFormOpen(false);
         setInputValues({
           title:'',
           description:'',
-        })
+        });
       })
       .catch((error) => {
         errorToast(error.message)
@@ -55,10 +55,10 @@ export const Top = () => {
       event.preventDefault()
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
-        .then((data) => {
+        .then(({data}) => {
           const newTodos = todos.map((todo) => {
             if (editTodoId === todo.id) {
-              return data.data
+              return data
             }
             return todo
           })
@@ -112,10 +112,10 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
-        .then((data) => {
+        .then(({data}) => {
           const newTodos = todos.map((todo) => {
             if (todo.id === id) {
-              return data.data
+              return data
             }
             return todo
           })
