@@ -86,7 +86,8 @@ export const Top = () => {
           console.log(data, editTodoId) // 編集内容のデータが出力
 
           // 編集したToDoのタイトルと説明をToDoの一覧に反映
-          setTodos((todo) => todo.map((fixTodos) => fixTodos.id === editTodoId ? data : fixTodos))
+          setTodos((todo) => todo.map(
+            (fixTodos) => fixTodos.id === editTodoId ? data : fixTodos))
 
           // 編集フォームを非表示
           setEditTodoId(false)
@@ -121,6 +122,21 @@ export const Top = () => {
       })
     }, [])
 
+  // 切り替えボタンをクリックした時に実行するhandleToggleButtonClick関数を定義
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          setTodos((todo) => todo.map((fixTodos) => fixTodos.id === id ? data : fixTodos))
+        })
+    },
+    [todos]
+  )
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
@@ -152,6 +168,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
