@@ -4,11 +4,12 @@ import { memo } from 'react'
 import styles from './index.module.css'
 
 export const Button = memo(({ className, buttonStyle, children, ...props }) => {
+  console.log(props)
   return (
     <button
       type={props.type}
       className={`${styles.button} ${styles[`${buttonStyle}`]} ${className}`}
-      {...props}
+      {...props} //onClickが入っている
     >
       {children}
     </button>
