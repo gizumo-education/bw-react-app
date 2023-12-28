@@ -111,6 +111,16 @@ export const Top = () => {
     [todos]
   )
 
+  // ToDoの削除ボタンをクリックした時に実行するhandleDeleteButtonClick関数を定義
+  // {id}は削除するToDoのid
+  const handleDeleteButtonClick = useCallback(
+    (id) => {
+      axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
+        console.log(data)
+        setTodos(data)
+      })
+    }, [])
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
@@ -141,6 +151,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
