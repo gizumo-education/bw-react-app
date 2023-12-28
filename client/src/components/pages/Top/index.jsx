@@ -6,6 +6,7 @@ import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
@@ -71,6 +72,9 @@ export const Top = () => {
         description: '',
       })
     })
+      .catch((error) => {
+        errorToast(error.message)
+      })
   },
     [inputValues]
   )
@@ -91,6 +95,18 @@ export const Top = () => {
 
           // 編集フォームを非表示
           setEditTodoId(false)
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [editTodoId, inputValues]
@@ -120,6 +136,18 @@ export const Top = () => {
         console.log(data)
         setTodos(data)
       })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     }, [])
 
   // 切り替えボタンをクリックした時に実行するhandleToggleButtonClick関数を定義
@@ -133,6 +161,18 @@ export const Top = () => {
           console.log(data)
           setTodos((todo) => todo.map((fixTodos) => fixTodos.id === id ? data : fixTodos))
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [todos]
   )
@@ -142,6 +182,9 @@ export const Top = () => {
       setTodos(data)
       console.log(data) // 配列データ
     })
+      .catch((error) => {
+        errorToast(error.message)
+      })
   }, [])
 
   return (
