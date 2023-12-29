@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -12,7 +14,8 @@ import styles from './index.module.css'
 
 export const Top = () => {
   // 取得したToDoの一覧を管理するstate
-  const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
 
   // 編集するToDoのidを管理するstate
   const [editTodoId, setEditTodoId] = useState('')
@@ -61,7 +64,9 @@ export const Top = () => {
         // console.log(...prevTodos); // 以前取得したデータの入った{}をスプレッド構文で出力
         // console.log(data); // 新しく追加したいデータ
         return ([...prevTodos, data]) // 53,54行目の2つをprevTodosに返す
-      })
+      },
+        [setTodos, inputValues]
+      )
 
       // 追加フォーム非表示
       setIsAddTaskFormOpen(false)
@@ -109,7 +114,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   // 編集ボタンがクリックされた時に、
@@ -148,7 +153,9 @@ export const Top = () => {
               break
           }
         })
-    }, [])
+    },
+    [setTodos]
+  )
 
   // 切り替えボタンをクリックした時に実行するhandleToggleButtonClick関数を定義
   const handleToggleButtonClick = useCallback(
@@ -174,7 +181,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
 
   useEffect(() => {
@@ -185,7 +192,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
