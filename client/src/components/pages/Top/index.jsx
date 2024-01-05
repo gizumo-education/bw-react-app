@@ -36,7 +36,6 @@ export const Top = () => {
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        console.log(data)
         setTodos([...todos, data])
       })
         .catch((error) => {
@@ -73,7 +72,6 @@ export const Top = () => {
           }
         })
       setEditTodoId('')
-      setIsAddTaskFormOpen(false)
     },
     [editTodoId, inputValues]
   )
@@ -118,6 +116,7 @@ export const Top = () => {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
+          console.log(data)
           setTodos((todos) => todos.map((todo) => todo.id === id ? data : todo))
         })
         .catch((error) => {
@@ -171,7 +170,8 @@ export const Top = () => {
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
               onToggleButtonClick={handleToggleButtonClick}
-            />)
+            />
+          )
         })}
         <li>
           {isAddTaskFormOpen ? (
