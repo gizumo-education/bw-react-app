@@ -14,7 +14,7 @@ export const completedTodoListState = selector({
 
 export const incompleteTodoListState = selector({
   key: 'incompleteTodoListState',
-  get: () => {
-    return []
+  get: (todoState) => {
+    return [todoState.filter()]
   },
 })
