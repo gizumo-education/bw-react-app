@@ -6,14 +6,36 @@ import { Icon } from '../Icon'
 
 import styles from './index.module.css'
 
-export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick }) => {
+export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, onToggleButtonClick}) => {
   return (
     <li className={styles['list-item']}>
 
+      {todo.isCompleted ? (
+        <Button
+          buttonStyle='icon-only'
+          className={styles['complete-button']}
+          onClick={() => onToggleButtonClick(todo.id)}
+        >
+          <Icon iconName='check' size='large' color='orange' />
+        </Button>
+      ) : (
+        <Button
+          buttonStyle='icon-only'
+          className={styles['complete-button']}
+          onClick={() => onToggleButtonClick(todo.id)}
+        >
+          <Icon
+            iconName='circle'
+            size='medium'
+            className={styles['circle-icon']}
+          />
+        </Button>
+      )}
+
       <div className={styles.task}>
-        <div className={styles.title}>{todo.title}</div>
+        <div className={`${styles.title} ${todo.isCompleted ? styles['task-completed'] : ''}`}>{todo.title}</div>
         {todo.description && (
-          <div className={styles.description}>{todo.description}</div>
+          <div className={`${styles.description} ${todo.isCompleted ? styles['task-completed'] : ''}`}>{todo.description}</div>
         )}
       </div>
 
@@ -25,7 +47,7 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick }) 
           <Icon iconName='trash' color='indigo-blue' size='medium' />
         </Button>
       </div>
-      
+
     </li>
   )
 })
@@ -40,4 +62,5 @@ ListItem.propTypes = {
   }).isRequired,
   onEditButtonClick: PropTypes.func.isRequired,
   onDeleteButtonClick: PropTypes.func.isRequired,
+  onToggleButtonClick: PropTypes.func.isRequired,
 }

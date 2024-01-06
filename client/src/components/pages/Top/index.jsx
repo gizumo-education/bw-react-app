@@ -97,6 +97,20 @@ export const Top = () => {
     })
   }, [])
 
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          setTodos((prevTodos) => prevTodos.map((todo) => todo.id === id ? { ...todo, ...data } : todo));
+        })
+    },
+    [todos]
+  )
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       // ToDoの一覧を取得
@@ -126,7 +140,7 @@ export const Top = () => {
           }
           // editTodoIdに格納されたToDoのidとtodosに格納されたToDoのidが一致するかどうかを判定
 
-          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick}/>
+          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} onToggleButtonClick={handleToggleButtonClick}/>
         })}
 
         <li>
