@@ -88,6 +88,14 @@ export const Top = () => {
 
   }, [todos])
   
+  const handleDeleteButtonClick = useCallback((id) => {
+    // 練習問題の追加
+    axios.delete(`http://localhost:3000/todo/${id}`)
+    .then(() => {
+      console.log(id)
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    })
+  }, [])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -118,7 +126,7 @@ export const Top = () => {
           }
           // editTodoIdに格納されたToDoのidとtodosに格納されたToDoのidが一致するかどうかを判定
 
-          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick}/>
+          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick}/>
         })}
 
         <li>
