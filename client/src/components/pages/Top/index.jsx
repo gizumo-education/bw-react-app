@@ -7,10 +7,12 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+
 import styles from './index.module.css'
 
 export const Top = () => {
   const [todos, setTodos] = useState([])
+  const [editTodoId, setEditTodoId] = useState('')
   // [todos]は現在の状態を保持し、[setTodos]は新しい状態を引数として受け取り[todos]を更新する
 
   const [inputValues, setInputValues] = useState({
@@ -21,12 +23,16 @@ export const Top = () => {
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
   const handleAddTaskButtonClick = useCallback(() => {
+    setInputValues({ title: '', description: '' })
+    setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
   // 「タスクを追加」ボタンをクリックした時に実行する関数
 
   const handleCancelButtonClick = useCallback(() => {
+    setEditTodoId('')
     setIsAddTaskFormOpen(false)
+
   }, [])
   // ToDoの追加フォームのキャンセルボタンをクリックした時に実行する関数
 
@@ -49,6 +55,40 @@ export const Top = () => {
   )
   // axiosを使用してAPI通信を行いToDoを追加
 
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .then(({ data }) => {
+          console.log(data)
+
+          // 練習問題の追加
+          setTodos((prevTodos) =>
+            prevTodos.map((todo) =>
+              todo.id === editTodoId ? { ...todo, ...inputValues } : todo
+            )
+          );
+          setEditTodoId('');
+          setIsAddTaskFormOpen(false);
+        })
+    },
+    [editTodoId, inputValues]
+  )
+
+  const handleEditButtonClick = useCallback((id) => {
+    setIsAddTaskFormOpen(false)
+    setEditTodoId(id)
+
+    const targetTodo = todos.find((todo) => todo.id === id)
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    })
+
+  }, [todos])
+  
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       // ToDoの一覧を取得
@@ -62,8 +102,25 @@ export const Top = () => {
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
-          return <ListItem key={todo.id} todo={todo} />
+
+          if (editTodoId === todo.id) {
+            return (
+              <li key={todo.id}>
+                <Form
+                  value={inputValues}
+                  editTodoId={editTodoId}
+                  onChange={handleInputChange}
+                  onCancelClick={handleCancelButtonClick}
+                  onSubmit={handleEditedTodoSubmit}
+                />
+              </li>
+            )
+          }
+          // editTodoIdに格納されたToDoのidとtodosに格納されたToDoのidが一致するかどうかを判定
+
+          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick}/>
         })}
+
         <li>
           {isAddTaskFormOpen ? (
             <Form value={inputValues} onChange={handleInputChange} onCancelClick={handleCancelButtonClick} onSubmit={handleCreateTodoSubmit}/>
