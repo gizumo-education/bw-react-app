@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -9,12 +11,13 @@ import { Form } from '../../ui/Form'
 
 import { errorToast } from '../../../utils/errorToast' // エラーハンドリング
 
-
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
   const [editTodoId, setEditTodoId] = useState('')
+  const incompleteTodos = useRecoilValue(incompleteTodoListState);
   // [todos]は現在の状態を保持し、[setTodos]は新しい状態を引数として受け取り[todos]を更新する
 
   const [inputValues, setInputValues] = useState({
@@ -58,7 +61,7 @@ export const Top = () => {
         errorToast(error.message)
       })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
 
@@ -90,7 +93,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   const handleEditButtonClick = useCallback((id) => {
@@ -127,7 +130,7 @@ export const Top = () => {
           break
       }
     })
-  }, [])
+  }, [setTodos])
 
 
   // 完了・未完了の切り替え(✓)
@@ -155,7 +158,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [setTodos, todos]
   )
 
 
@@ -171,13 +174,13 @@ export const Top = () => {
     })
     // ネットワークエラーの警告表示
 
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
-        {todos.map((todo) => {
+        {incompleteTodos.map((todo) => { //incompleteTodosに変更
 
           if (editTodoId === todo.id) {
             return (
