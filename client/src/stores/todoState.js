@@ -7,14 +7,16 @@ export const todoState = atom({
 
 export const completedTodoListState = selector({
   key: 'completedTodoListState',
-  get: () => {
-    return []
+  get: ({ get }) => {
+    const todos = get(todoState);
+    return todos.filter((todo) => todo.isCompleted);
   },
 })
 
 export const incompleteTodoListState = selector({
   key: 'incompleteTodoListState',
-  get: (todoState) => {
-    return [todoState.filter()]
+  get: ({ get }) => {
+    const todos = get(todoState);
+    return todos.filter((todo) => !todo.isCompleted);
   },
 })
