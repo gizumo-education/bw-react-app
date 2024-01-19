@@ -35,10 +35,13 @@ const handleCreateTodoSubmit = useCallback(
     event.preventDefault()
     axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
       console.log(data)
-      setTodos(data)
-      setIsAddTaskFormOpen()
-      setInputValues()
-      })
+      setTodos((todos) => [...todos, data])
+      setIsAddTaskFormOpen(false)
+      setInputValues((value) => ({
+        title: '',
+        description: ''
+      }))
+    })
   },
   [inputValues]
 )
