@@ -16,29 +16,23 @@ import styles from './index.module.css'
 export const Top = () => {
   const todos = useRecoilValue(incompleteTodoListState)
   const setTodos = useSetRecoilState(todoState)
-  const [editTodoId, setEditTodoId] = useState('')
+  const [editTodoId, setEditTodoId] = useState('') // 編集中のToDoのidを保持
   const incompleteTodos = useRecoilValue(incompleteTodoListState);
-  // [todos]は現在の状態を保持し、[setTodos]は新しい状態を引数として受け取り[todos]を更新する
+  const [inputValues, setInputValues] = useState({title: '', description: '',}) // フォームの入力値の保持
+  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false) // 追加フォームの表示・非表示
 
-  const [inputValues, setInputValues] = useState({
-    title: '',
-    description: '',
-  })
-
-  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
+  // 追加機能
 
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
-  // 「タスクを追加」ボタンをクリックした時に実行する関数
 
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('')
     setIsAddTaskFormOpen(false)
   }, [])
-  // ToDoの追加フォームのキャンセルボタンをクリックした時に実行する関数
 
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
@@ -49,14 +43,11 @@ export const Top = () => {
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-
-      //練習問題
         console.log(data)
         setIsAddTaskFormOpen(false)
         setInputValues({})
         setTodos((prevTodos) => [...prevTodos, data]);
       })
-
       .catch((error) => {
         errorToast(error.message)
       })
@@ -64,22 +55,18 @@ export const Top = () => {
     [setTodos, inputValues]
   )
 
+  // 編集機能
 
-  // 編集
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
-      axios
-        .patch(`http://localhost:3000/todo/editTodoId`, inputValues)
+      axios.patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
-
-          // 練習問題「編集したToDoのタイトルと説明をToDoの一覧に反映し、ToDoの編集フォームを非表示にする」
           setTodos((prevTodos) => prevTodos.map((todo) => todo.id === editTodoId ? { ...todo, ...inputValues } : todo));
           setEditTodoId('');
           setIsAddTaskFormOpen(false);
         })
-
         .catch((error) => {
           switch (error.statusCode) {
             case 404:
@@ -99,7 +86,6 @@ export const Top = () => {
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
-
     const targetTodo = todos.find((todo) => todo.id === id)
     setInputValues({
       title: targetTodo.title,
@@ -107,17 +93,14 @@ export const Top = () => {
     })
   }, [todos])
 
+  // 削除機能
 
-  // 削除
   const handleDeleteButtonClick = useCallback((id) => {
-    
-    // 練習問題
     axios.delete(`http://localhost:3000/todo/${id}`)
     .then(() => {
       console.log(id)
       setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
     })
-
     .catch((error) => {
       switch (error.statusCode) {
         case 404:
@@ -132,19 +115,14 @@ export const Top = () => {
     })
   }, [setTodos])
 
+  // チェックマーク
 
-  // 完了・未完了の切り替え(✓)
-  const handleToggleButtonClick = useCallback(
-    (id) => {
-      axios
-        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
-          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
-        })
+  const handleToggleButtonClick = useCallback((id) => {
+      axios.patch(`http://localhost:3000/todo/${id}/completion-status`, {isCompleted: todos.find((todo) => todo.id === id).isCompleted,})
         .then(({ data }) => {
           console.log(data)
           setTodos((prevTodos) => prevTodos.map((todo) => todo.id === id ? { ...todo, ...data } : todo));
         })
-
         .catch((error) => {
           switch (error.statusCode) {
             case 404:
@@ -161,27 +139,21 @@ export const Top = () => {
     [setTodos, todos]
   )
 
-
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       console.log(data)
       setTodos(data)
     })
-    // ToDoの一覧取得
-
     .catch((error) => {
       errorToast(error.message)
     })
-    // ネットワークエラーの警告表示
-
   }, [setTodos])
 
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
-        {incompleteTodos.map((todo) => { //incompleteTodosに変更
-
+        {incompleteTodos.map((todo) => {
           if (editTodoId === todo.id) {
             return (
               <li key={todo.id}>
@@ -189,22 +161,33 @@ export const Top = () => {
                   value={inputValues}
                   editTodoId={editTodoId}
                   onChange={handleInputChange}
-                  onCancelClick={handleCancelButtonClick}
-                  onSubmit={handleEditedTodoSubmit}
+                  onCancelClick={handleCancelButtonClick} // キャンセルボタン
+                  onSubmit={handleEditedTodoSubmit} // 送信ボタン
                 />
               </li>
             )
           }
-          // editTodoIdに格納されたToDoのidとtodosに格納されたToDoのidが一致するかどうかを判定
 
-          return <ListItem key={todo.id} todo={todo} onEditButtonClick={handleEditButtonClick} onDeleteButtonClick={handleDeleteButtonClick} onToggleButtonClick={handleToggleButtonClick}/>
+          return <ListItem
+            key={todo.id}
+            todo={todo}
+            onEditButtonClick={handleEditButtonClick} // 編集ボタン
+            onDeleteButtonClick={handleDeleteButtonClick} // 削除ボタン
+            onToggleButtonClick={handleToggleButtonClick} // チェックボタン
+          />
         })}
-
         <li>
-          {isAddTaskFormOpen ? (
-            <Form value={inputValues} onChange={handleInputChange} onCancelClick={handleCancelButtonClick} onSubmit={handleCreateTodoSubmit}/>
+          {isAddTaskFormOpen ? ( // 追加フォームの表示(true) or 追加ボタンの表示(false)
+            <Form
+              value={inputValues}
+              onChange={handleInputChange}
+              onCancelClick={handleCancelButtonClick}
+              onSubmit={handleCreateTodoSubmit} />
           ) : (
-            <Button buttonStyle='indigo-blue' onClick={handleAddTaskButtonClick} className={styles['add-task']}>
+            <Button
+              buttonStyle='indigo-blue'
+              onClick={handleAddTaskButtonClick}
+              className={styles['add-task']}>
               <Icon
                 iconName='plus'
                 color='orange'

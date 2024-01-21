@@ -9,7 +9,6 @@ import styles from './index.module.css'
 export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, onToggleButtonClick }) => {
   return (
     <li className={styles['list-item']}>
-
       {todo.isCompleted ? (
         <Button
           buttonStyle='icon-only'
