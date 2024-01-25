@@ -29,58 +29,68 @@ export const Top = () => {
     setIsAddTaskFormOpen(false)
   }, [])
 
-const handleInputChange = useCallback((event) => {
-  const { name, value } = event.target
-  setInputValues((prev) => ({ ...prev, [name]: value }))
-})
+  const handleInputChange = useCallback((event) => {
+    const { name, value } = event.target
+    setInputValues((prev) => ({ ...prev, [name]: value }))
+  })
 
-const handleCreateTodoSubmit = useCallback(
-  (event) => {
-    event.preventDefault()
-    axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-      console.log(data)
-      setTodos((todos) => [...todos, data])
+  const handleCreateTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
+        console.log(data)
+        setTodos((todos) => [...todos, data])
+        setIsAddTaskFormOpen(false)
+        setInputValues((value) => ({
+          title: '',
+          description: ''
+        }))
+      })
+    },
+    [inputValues]
+  )
+
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .then(({ data }) => {
+          console.log(data)
+          setTodos(todos.map((todos) => (
+            {...todos,
+              'title': todos.id == data.id ? data.title : todos.title,
+              'description': todos.id == data.id ? data.description : todos.description,
+            }
+          )))
+          setEditTodoId(false)
+        })
+    },
+    [editTodoId, inputValues]
+  )
+
+  const handleEditButtonClick = useCallback(
+    (id) => {
       setIsAddTaskFormOpen(false)
-      setInputValues((value) => ({
-        title: '',
-        description: ''
-      }))
-    })
-  },
-  [inputValues]
-)
+      setEditTodoId(id)
+      const targetTodo = todos.find((todo) => todo.id === id)
+      setInputValues({
+        title: targetTodo.title,
+        description: targetTodo.description,
+      })
+    },
+    [todos]
+  )
 
-const handleEditedTodoSubmit = useCallback(
-  (event) => {
-    event.preventDefault()
+  const handleDeleteButtonClick = useCallback((id) => {
     axios
-      .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+      .delete(`http://localhost:3000/todo/${id}`)
       .then(({ data }) => {
         console.log(data)
-        setTodos(todos.map((todos) => (
-          {...todos,
-            'title': todos.id == data.id ? data.title : todos.title,
-            'description': todos.id == data.id ? data.description : todos.description,
-          }
-        )))
-        setEditTodoId(false)
+        setTodos(data)
       })
-  },
-  [editTodoId, inputValues]
-)
 
-const handleEditButtonClick = useCallback(
-  (id) => {
-    setIsAddTaskFormOpen(false)
-    setEditTodoId(id)
-    const targetTodo = todos.find((todo) => todo.id === id)
-    setInputValues({
-      title: targetTodo.title,
-      description: targetTodo.description,
-    })
-  },
-  [todos]
-)
+  },[])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -112,6 +122,7 @@ const handleEditButtonClick = useCallback(
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
