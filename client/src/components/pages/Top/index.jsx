@@ -57,10 +57,10 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
-          setTodos(todos.map((todos) => (
-            {...todos,
-              'title': todos.id == data.id ? data.title : todos.title,
-              'description': todos.id == data.id ? data.description : todos.description,
+          setTodos(todos.map((todo) => (
+            {...todo,
+              'title': todo.id == data.id ? data.title : todo.title,
+              'description': todo.id == data.id ? data.description : todo.description,
             }
           )))
           setEditTodoId(false)
@@ -91,6 +91,22 @@ export const Top = () => {
       })
 
   },[])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          setTodos(todos.map((todo) => (
+            todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : todo
+          )))
+        })
+    },
+    [todos]
+  )
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -123,6 +139,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
@@ -156,3 +173,5 @@ export const Top = () => {
 }
 
 // useCallback：レンダリングごとに異なる関数オブジェクトを返す
+// 第二引数に変更があった場合に第一引数(関数部分)を実行する
+// !：真偽値として評価し、その値を反転
