@@ -4,9 +4,11 @@ import { memo } from 'react'
 import { Header } from '../Header'
 import { Sidebar } from '../Sidebar'
 
+
 import styles from './index.module.css'
 
-export const Layout = memo(({ children }) => {
+export const Layout = memo(({ children }) => { 
+//layoutコンポーネントがchildrenを受け取るようにする
   return (
     <div className={styles.layout}>
       <Header />
