@@ -6,6 +6,7 @@ import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
@@ -46,6 +47,9 @@ export const Top = () => {
           description: ''
         }))
       })
+      .catch((error) => {
+        errorToast(error.message)
+      })
     },
     [inputValues]
   )
@@ -57,13 +61,21 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
-          setTodos(todos.map((todo) => (
-            {...todo,
-              'title': todo.id == data.id ? data.title : todo.title,
-              'description': todo.id == data.id ? data.description : todo.description,
-            }
-          )))
+          const newTodos = todos.map((todo) => todo.id === data.id ? data : todo)
+          setTodos(newTodos)
           setEditTodoId(false)
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [editTodoId, inputValues]
@@ -89,6 +101,18 @@ export const Top = () => {
         console.log(data)
         setTodos(data)
       })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
 
   },[])
 
@@ -104,6 +128,18 @@ export const Top = () => {
             todo.id === id ? {...todo, isCompleted: !todo.isCompleted} : todo
           )))
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [todos]
   )
@@ -112,6 +148,9 @@ export const Top = () => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       console.log(data)
       setTodos(data)
+    })
+    .catch((error) => {
+      errorToast(error.message)
     })
   }, [])
 
@@ -133,14 +172,14 @@ export const Top = () => {
             </li>
           )
         }
-          return (
-            <ListItem
-              key={todo.id}
-              todo={todo}
-              onEditButtonClick={handleEditButtonClick}
-              onDeleteButtonClick={handleDeleteButtonClick}
-              onToggleButtonClick={handleToggleButtonClick}
-            />
+        return (
+          <ListItem
+            key={todo.id}
+            todo={todo}
+            onEditButtonClick={handleEditButtonClick}
+            onDeleteButtonClick={handleDeleteButtonClick}
+            onToggleButtonClick={handleToggleButtonClick}
+          />
           )
         })}
         <li>
@@ -172,6 +211,10 @@ export const Top = () => {
   )
 }
 
-// useCallback：レンダリングごとに異なる関数オブジェクトを返す
+// useCallback：レンダリングごとに異なる関数オブジェクトを返す、関数をメモ化→呼び出す
 // 第二引数に変更があった場合に第一引数(関数部分)を実行する
 // !：真偽値として評価し、その値を反転
+// イベントハンドラ内に複数回更新関数が実行されても、レンダリングは一回で済むのがReact
+// 一文字入力されるたびにレンダリングすることで、保存時にページ遷移せずとも入力内容を保持できる
+// onSubmitはformタグでしか使えない
+// Ctrlキーを押しながら変数名クリックで該当箇所まで飛べる
