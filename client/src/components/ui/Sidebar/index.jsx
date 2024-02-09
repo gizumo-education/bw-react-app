@@ -36,7 +36,7 @@ export const Sidebar = memo(() => {
                       : [styles['navi-item']]
                   }}
                 >
-                  {({ isActive }) => {
+                  {({ isActive }) => (
                     <>
                       <Icon
                         iconName={list.iconName}
@@ -46,7 +46,7 @@ export const Sidebar = memo(() => {
                       />
                       <span className={styles.text}>{list.lineName}</span>
                     </>
-                  }}
+                  )}
                 </NavLink>
               </li>
             )
@@ -58,3 +58,6 @@ export const Sidebar = memo(() => {
 })
 
 Sidebar.displayName = 'Sidebar'
+
+// { return ~ } return必須
+// ( <>~</> ) 単一要素を返すだけなのでreturn不要
