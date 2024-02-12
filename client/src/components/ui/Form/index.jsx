@@ -5,12 +5,10 @@ import { Button } from '../Button'
 
 import styles from './index.module.css'
 
-//memo コンポーネントのpropsが変更された場合のみ再レンダリングを行うためのもの
-export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
+export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) =>{
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles['input-field']}>
-       {/* ToDoの説明を入力するtextarea要素 */}
         <input
           type='text'
           name='title'
@@ -28,7 +26,6 @@ export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
           className={styles['input-description']}
         />
       </div>
-            {/* oDoの追加フォームのキャンセルボタン */}
       <div className={styles['button-area']}>
         <Button
           buttonStyle='cancel'
@@ -37,7 +34,6 @@ export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
         >
           キャンセル
         </Button>
-              {/* ToDoの追加フォームの送信ボタン */}
         <Button
           type='submit'
           disabled={!value.title}
