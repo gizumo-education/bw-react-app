@@ -26,25 +26,31 @@ export const Top = () => {
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => (
+      console.log(prev),
       {...prev, [name]: value }
     ),[])
-    const handleCreateTodoSubmit = useCallback(
-      (event) => {
-        event.preventDefault()
-        axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-          console.log(data)
+  })
+  const handleCreateTodoSubmit = useCallback(
+     (event) => {
+       event.preventDefault()
+       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
+        setInputValues({
+          title: '',
+          description: '',
         })
-      },
-      [inputValues]
-    )
+        setIsAddTaskFormOpen()
+    },
+     [inputValues]
+   )
   })
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       console.log(data)
       setTodos(data)
+      setTodos(response)
     })
-  }, [])
+  }, [inputValues])
 
   return (
     <Layout>
