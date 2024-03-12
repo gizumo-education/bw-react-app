@@ -18,7 +18,7 @@ export const Layout = memo(({ children }) => {
   )
 })
 
-Layout.displayName = 'Layout'
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
-}
+// Layout.displayName = 'Layout'
+// Layout.propTypes = {
+//   children: PropTypes.node.isRequired,
+// }
