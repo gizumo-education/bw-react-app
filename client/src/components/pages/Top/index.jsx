@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -12,13 +14,15 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
+
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({
       title: '',
@@ -52,7 +56,7 @@ export const Top = () => {
           errorToast(error.message)
         })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
   const handleEditButtonClick = useCallback(
     (id) => {
@@ -82,7 +86,7 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  }, [setTodos])
   const handleToggleButtonClick = useCallback(
     (id) => {
       axios
@@ -113,7 +117,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
   const handleEditedTodoSubmit = useCallback(
     (event) => {
@@ -121,8 +125,14 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          todos.find((todo) => todo.id === data.id).title = data.title
-          todos.find((todo) => todo.id === data.id).description = data.description
+          const newTodos = todos.map((todo) => {
+            if (data.id === todo.id) {
+              return data
+            } else {
+              return todo
+            }
+          })
+          setTodos(newTodos)
           setEditTodoId('')
       })
       .catch((error) => {
@@ -138,7 +148,7 @@ export const Top = () => {
         }
       })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   useEffect(() => {
@@ -150,7 +160,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
