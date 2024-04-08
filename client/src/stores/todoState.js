@@ -9,7 +9,7 @@ export const completedTodoListState = selector({
   key: 'completedTodoListState',
   get: ({ get }) => {
     const todos = get(todoState)
-    return todos.filter((todo) => todo.isCompleted === true)
+    return todos.filter((todo) => todo.isCompleted)
   },
 })
 
@@ -17,6 +17,6 @@ export const incompleteTodoListState = selector({
   key: 'incompleteTodoListState',
   get: ({ get }) => {
     const todos = get(todoState)
-    return todos.filter((todo) => todo.isCompleted === false)
+    return todos.filter((todo) => todo.isCompleted)
   },
 })
