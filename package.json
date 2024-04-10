@@ -6,7 +6,7 @@
   "scripts": {
     "preinstall": "npx only-allow npm",
     "dev:server": "npm run dev -w server",
-    "dev:client": "sleep 3 && npm run dev -w client",
+    "dev:client": "timeout /t 3 && npm run dev -w client",
     "start": "run-p dev:*"
   },
   "devDependencies": {
