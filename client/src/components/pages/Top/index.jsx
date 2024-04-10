@@ -130,9 +130,10 @@ export const Top = () => {
           setTodos(
             todos.map((todo) => {
               if (todo.id === data.id) {
-                todo.isCompleted = !todo.isCompleted
+                return data
+              } else {
+                return todo
               }
-              return todo
             })
           )
         })
