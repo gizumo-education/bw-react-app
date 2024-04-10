@@ -41,7 +41,7 @@ export const Top = () => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         console.log(data)
-        setTodos(todos)
+        setTodos([...todos, inputValues])
         setIsAddTaskFormOpen(false)
         setInputValues({title: '', description: '',})
       })
