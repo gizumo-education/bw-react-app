@@ -40,8 +40,8 @@ export const Top = () => {
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        console.log(data)
-        setTodos([...todos, inputValues])
+        console.log(todos)
+        setTodos([...todos, data])
         setIsAddTaskFormOpen(false)
         setInputValues({title: '', description: '',})
       })
@@ -59,7 +59,13 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
-          setTodos(todos)
+          setTodos(todos.map((todo) => {
+            if(editTodoId === todo.id) {
+              return data
+            }
+            return todo
+          }
+        ))
           setEditTodoId('')
         })
         .catch((error) => {
@@ -87,7 +93,7 @@ export const Top = () => {
         title: targetTodo.title,
         description: targetTodo.description,
       })
-  }, [todos])
+    }, [todos])
 
   const handleDeleteButtonClick = useCallback((id) => {
     axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
