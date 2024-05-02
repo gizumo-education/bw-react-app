@@ -41,8 +41,8 @@ export const Top = () => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         console.log(data)
-        setIsAddTaskFormOpen(false)//Todoの追加
-        setInputValues('')//Todoの追加
+        setIsAddTaskFormOpen(false) //Todoの追加
+        setInputValues('') //Todoの追加
       })
     },
     [inputValues]
@@ -55,7 +55,7 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
-          setEditTodoId('')//Todoの編集
+          setEditTodoId('') //Todoの編集
         })
     },
     [editTodoId, inputValues]
@@ -73,6 +73,12 @@ export const Top = () => {
     },
     [todos]
   )
+
+  const handleDeleteButtonClick = useCallback(
+    (id) => {
+      axios.delete(`http://localhost:3000/todo/${id}`) //Todoの削除
+      console.log(id)
+    }, [])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -104,6 +110,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
