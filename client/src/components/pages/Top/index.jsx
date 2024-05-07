@@ -41,8 +41,9 @@ export const Top = () => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         console.log(data)
-        setIsAddTaskFormOpen(false) //Todoの追加
-        setInputValues('') //Todoの追加
+        setTodos([...todos, data])//Todoの追加(更新)
+        setIsAddTaskFormOpen(false) //Todoの追加(非表示)
+        setInputValues('') //Todoの追加(入力欄空)
       })
     },
     [inputValues]
@@ -55,7 +56,7 @@ export const Top = () => {
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
           console.log(data)
-          setEditTodoId('') //Todoの編集
+          setEditTodoId('') //Todoの編集(フォーム非表示)
         })
     },
     [editTodoId, inputValues]
@@ -79,6 +80,19 @@ export const Top = () => {
       axios.delete(`http://localhost:3000/todo/${id}`) //Todoの削除
       console.log(id)
     }, [])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          console.log(data)
+        })
+    },
+    [todos]
+  )
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -111,6 +125,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
