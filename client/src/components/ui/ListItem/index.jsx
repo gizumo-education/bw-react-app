@@ -33,15 +33,15 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
         <div
           className={`${styles.title} ${
             todo.isCompleted ? styles['task-completed'] : ''
-            }`}
+          }`}
         >
           {todo.title}
         </div>
         {todo.description && (
           <div
-            className={`${styles.description}${
+            className={`${styles.description} ${
               todo.isCompleted ? styles['task-completed'] : ''
-        }`}
+            }`}
           >
             {todo.description}
           </div>
