@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types'
 import { memo } from 'react'
-import { Button } from '../Button'
-import { Icon } from '../Icon'
+import { Button } from '../Button'//編集
+import { Icon } from '../Icon'//編集
 
 import styles from './index.module.css'
-
+//ListItemコンポーネントは1つのToDoを表示するためのコンポーネント
 export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, onToggleButtonClick }) => {
   return (
     <li className={styles['list-item']}>
@@ -12,7 +12,7 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
         <Button
           buttonStyle='icon-only'
           className={styles['complete-button']}
-          onClick={() => onToggleButtonClick(todo.id)}
+          onClick={() => onToggleButtonClick(todo.id)}//onToggleButtonClickというpropsで渡された関数を実行
         >
           <Icon iconName='check' size='large' color='orange' />
         </Button>
@@ -48,15 +48,15 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
         )}
       </div>
       <div className={styles['task-action']}>
-        <Button
+        <Button //編集ボタン表示
           buttonStyle='icon-only'
-          onClick={() => onEditButtonClick(todo.id)}
+          onClick={() => onEditButtonClick(todo.id)}//onEditButtonClickというpropsで渡された関数を実行
         >
           <Icon iconName='edit' color='indigo-blue' size='medium' />
         </Button>
-        <Button
+        <Button //削除ボタン表示
           buttonStyle='icon-only'
-          onClick={() => onDeleteButtonClick(todo.id)}
+          onClick={() => onDeleteButtonClick(todo.id)}//onDeleteButtonClickというpropsで渡された関数を実行
         >
           <Icon iconName='trash' color='indigo-blue' size='medium' />
         </Button>

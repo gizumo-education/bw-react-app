@@ -8,7 +8,7 @@ export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles['input-field']}>
-        <input
+        <input //ToDoのタイトルを入力するinput要素
           type='text'
           name='title'
           placeholder='タスク名'
@@ -17,7 +17,7 @@ export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit
           onChange={onChange}
           className={styles['input-title']}
         />
-        <textarea
+        <textarea //ToDoの説明を入力するtextarea要素
           name='description'
           placeholder='説明'
           value={value.description}
@@ -26,14 +26,14 @@ export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit
         />
       </div>
       <div className={styles['button-area']}>
-        <Button
+        <Button //ToDoの追加フォームのキャンセルボタン
           buttonStyle='cancel'
           className={styles['cancel-button']}
           onClick={onCancelClick}
         >
           キャンセル
         </Button>
-        <Button
+        <Button //ToDoの追加フォームの送信ボタン
           type='submit'
           disabled={!value.title}
           className={styles['submit-button']}
