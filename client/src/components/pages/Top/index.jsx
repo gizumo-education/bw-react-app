@@ -73,8 +73,8 @@ export const Top = () => {
               if (todo.id === data.id) {
                 return {
                   ...todo,
-                  'description':data.description,
-                  'title':data.title
+                  description: data.description,
+                  title: data.title
                 }
               }
             return todo
