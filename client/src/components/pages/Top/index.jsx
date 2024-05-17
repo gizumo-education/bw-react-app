@@ -8,12 +8,12 @@ import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
+
 import styles from './index.module.css'
 
 export const Top = () => {
   const [todos, setTodos] = useState([])
-
-  console.log(todos)
 
   const [editTodoId, setEditTodoId] = useState('')
 
@@ -23,20 +23,24 @@ export const Top = () => {
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
+  // input value更新
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
 
+  // ＋ボタンクリック、form開く
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
+  // キャンセルボタンクリック
   const handleCancelButtonClick = useCallback(() => {
     setIsAddTaskFormOpen(false)
     setEditTodoId('')
   }, [])
+  // 編集ボタンクリック
   const handleEditButtonClick = useCallback(
     (id) => {
       setIsAddTaskFormOpen(false)
@@ -50,13 +54,27 @@ export const Top = () => {
     },
     [todos]
   )
-
+  // 削除ボタン
   const handleDeleteButtonClick = useCallback((id) => {
-    axios.delete(`http://localhost:3000/todo/${id}`).then((res) => {
-      setTodos(res.data)
-    })
+    axios
+      .delete(`http://localhost:3000/todo/${id}`)
+      .then((res) => {
+        setTodos(res.data)
+      })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
   }, [])
-
+  // トグル切り替え
   const handleToggleButtonClick = useCallback(
     (id) => {
       axios
@@ -73,29 +91,46 @@ export const Top = () => {
                 : val
             )
           )
-          console.log(todos.find((todo) => todo.id === id))
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [todos]
   )
-
+  // タスク追加
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
-      axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        setTodos((prevState) => [...prevState, data])
-        setIsAddTaskFormOpen(false)
-        setInputValues({ title: '', description: '' })
-      })
+      axios
+        .post('http://localhost:3000/todo', inputValues)
+        .then(({ data }) => {
+          setTodos((prevState) => [...prevState, data])
+          setIsAddTaskFormOpen(false)
+          setInputValues({ title: '', description: '' })
+        })
+        .catch((error) => {
+          errorToast(error.message)
+        })
     },
     [inputValues]
   )
-
+  // 編集タスク更新
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
       axios
-        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        // .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .patch(`http://localhost:3000/todo/editTodoId`, inputValues)
         .then(({ data }) => {
           // 練習問題 編集後にtodosの更新
           setTodos((prevState) =>
@@ -113,13 +148,29 @@ export const Top = () => {
           // 編集後にidを空に更新。
           setEditTodoId('')
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [editTodoId, inputValues]
   )
 
+  // タスク取得
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
+    })
+    .catch((error) => {
+      errorToast(error.message)
     })
   }, [])
 
