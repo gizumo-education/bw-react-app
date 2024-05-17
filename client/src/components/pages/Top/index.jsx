@@ -12,6 +12,9 @@ import styles from './index.module.css'
 
 export const Top = () => {
   const [todos, setTodos] = useState([])
+
+  console.log(todos)
+
   const [editTodoId, setEditTodoId] = useState('')
 
   const [inputValues, setInputValues] = useState({
@@ -48,12 +51,33 @@ export const Top = () => {
     [todos]
   )
 
-  // idにはtodoのidが渡されてくる
   const handleDeleteButtonClick = useCallback((id) => {
     axios.delete(`http://localhost:3000/todo/${id}`).then((res) => {
       setTodos(res.data)
     })
   }, [])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          // なぜboolean切り替わるのか？ 　　、!isCompletedを使用しなくても切り替わる。
+          //todo.controller.tsで切り替えている？
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          setTodos((prevState) =>
+            prevState.map((val) =>
+              val.id === data.id
+                ? { ...data, isCompleted: data.isCompleted }
+                : val
+            )
+          )
+          console.log(todos.find((todo) => todo.id === id))
+        })
+    },
+    [todos]
+  )
 
   const handleCreateTodoSubmit = useCallback(
     (event) => {
@@ -124,6 +148,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
