@@ -8,15 +8,16 @@ import styles from './index.module.css'
 
 const NaviList = [
   {
+    id: 1,
+    lineName: 'すべて',
+    path: '/',
+    iconName: 'todoList',
+  },
+  {
     id: 2,
     lineName: '完了済み',
     path: '/completed',
     iconName: 'completeList',
-  },
-  {
-    id: 1,
-    lineName: 'ToDo一覧',
-    path: '/top',
   },
 ]
 

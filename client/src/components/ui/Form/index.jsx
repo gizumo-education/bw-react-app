@@ -6,6 +6,7 @@ import { Button } from '../Button'
 import styles from './index.module.css'
 
 export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit }) => {
+  console.log(editTodoId)
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles['input-field']}>
