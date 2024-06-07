@@ -36,10 +36,13 @@ export const Top = () => {
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
+        setTodos((todos) => [...todos, data])
+        setIsAddTaskFormOpen(false)
+        setInputValues('')
         console.log(data)
       })
     },
-    [inputValues]
+    [inputValues,todos]
   )
 
   useEffect(() => {
@@ -61,7 +64,9 @@ export const Top = () => {
           <Form
             value={inputValues}
             onChange={handleInputChange}
-            onCancelClick={handleCancelButtonClick}/>
+            onCancelClick={handleCancelButtonClick}
+            onSubmit={handleCreateTodoSubmit}
+            />
         ) : (
           <Button
             buttonStyle='indigo-blue'
