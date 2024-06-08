@@ -48,6 +48,14 @@ export const Top = () => {
     [todos]
   )
 
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios
+      .delete(`http://localhost:3000/todo/${id}`)
+      .then(({data}) => {
+        setTodos(data)
+      })
+  }, [])
+
   const resetForm = () => {
     setInputValues({
       id: '',
@@ -84,7 +92,7 @@ export const Top = () => {
         .then(({ data }) => {
           setEditTodoId('')
           setTodos(
-            todos.map(todo =>
+            todos.map((todo) =>
               todo.id === editTodoId
                 ? { ...todo, title: data.title, description: data.description }
                 : todo
@@ -124,6 +132,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
