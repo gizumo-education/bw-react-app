@@ -49,12 +49,30 @@ export const Top = () => {
   )
 
   const handleDeleteButtonClick = useCallback((id) => {
-    axios
-      .delete(`http://localhost:3000/todo/${id}`)
-      .then(({data}) => {
-        setTodos(data)
-      })
+    axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
+      setTodos(data)
+    })
   }, [])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          setEditTodoId('')
+          setTodos(
+            todos.map((todo) =>
+              todo.id === id
+                ? { ...todo, isCompleted: data.isCompleted }
+                : todo
+            )
+          )
+        })
+    },
+    [todos]
+  )
 
   const resetForm = () => {
     setInputValues({
@@ -133,6 +151,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
