@@ -9,6 +9,8 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
+
 export const Top = () => {
   const [todos, setTodos] = useState([])
   const [editTodoId, setEditTodoId] = useState('')
@@ -49,9 +51,23 @@ export const Top = () => {
   )
 
   const handleDeleteButtonClick = useCallback((id) => {
-    axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
-      setTodos(data)
-    })
+    axios
+      .delete(`http://localhost:3000/todo/${id}`)
+      .then(({ data }) => {
+        setTodos(data)
+      })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するTodoが見つかりませんでした。画面を更新してください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
   }, [])
 
   const handleToggleButtonClick = useCallback(
@@ -64,11 +80,21 @@ export const Top = () => {
           setEditTodoId('')
           setTodos(
             todos.map((todo) =>
-              todo.id === id
-                ? { ...todo, isCompleted: data.isCompleted }
-                : todo
+              todo.id === id ? { ...todo, isCompleted: data.isCompleted } : todo
             )
           )
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast (
+                '完了・未完了を切り替えるTodoが見つかりませんでした。画面を更新して再度お試しください'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [todos]
@@ -94,9 +120,11 @@ export const Top = () => {
             description: data.description,
           },
         ])
-        console.log(todos)
         setIsAddTaskFormOpen(false)
         resetForm()
+      })
+      .catch((error) => {
+        errorToast(error.message)
       })
     },
     [inputValues]
@@ -116,6 +144,17 @@ export const Top = () => {
                 : todo
             )
           )
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するTodoが見つかりませんでした。画面を更新して再度お試しください'
+              )
+              break
+            default:
+              break
+          }
         })
     },
     [editTodoId, inputValues]
