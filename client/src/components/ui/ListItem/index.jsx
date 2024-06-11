@@ -49,7 +49,7 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
         )}
       </div>
       <div className={styles['task-action']}>
-        <Button
+        <Button  //編集アイコンのボタン
           buttonStyle='icon-only'
           onClick={() => onEditButtonClick(todo.id)}
         >

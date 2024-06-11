@@ -12,9 +12,9 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
-  const [editTodoId, setEditTodoId] = useState('')
-  const [inputValues, setInputValues] = useState({
+  const [todos, setTodos] = useState([]) // 取得したToDoの一覧を管理するためのuseState
+  const [editTodoId, setEditTodoId] = useState('') //ToDoの編集フォームを切り替えるためのuseState
+  const [inputValues, setInputValues] = useState({ //取得できたtitleとdescriptionを管理するためのuseState
     title: '',
     description: '',
   })
@@ -22,7 +22,7 @@ export const Top = () => {
 
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' }) 
-    setEditTodoId('')
+    setEditTodoId('')  //空文字を指定することにより、if文の判定に一致しなくなりフォームを非表示にできる ※30行目も該当
     setIsAddTaskFormOpen(true)
   }, [])
 
@@ -34,6 +34,7 @@ export const Top = () => {
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
+    //console.log(prev);
   }, [])
 
   const handleCreateTodoSubmit = useCallback(
@@ -58,14 +59,14 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          console.log(data)
+          //console.log(data)
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
               todo.id === editTodoId ? { ...inputValues, ...data } : todo
             )
           )
           setEditTodoId('')
-          setInputValues({ title: '', description: '' })
+          setInputValues({ title: '', description: '' }) //空文字にして編集の入力欄を空(クリア)にする
         })
         .catch((error) => {
           switch (error.statusCode) {
@@ -73,21 +74,21 @@ export const Top = () => {
               errorToast(
                 '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
               )
-            break
+            break  //switch構文をぬける
             default:
             errorToast(error.message)
-            break
+            break  //switch構文をぬける
           }
         })
     },
     [editTodoId, inputValues]
   )
 
-  const handleEditButtonClick = useCallback(
+  const handleEditButtonClick = useCallback(   //編集ボタンがクリックされたときに実行される処理
     (id) => {
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
-    const targetTodo = todos.find((todo) => todo.id === id)
+    const targetTodo = todos.find((todo) => todo.id === id)  //編集フォームを開いた時に、取得したtitleとdescriptionをデフォルトで表示させる
     setInputValues({
       title: targetTodo.title,
       description: targetTodo.description,
@@ -142,10 +143,10 @@ export const Top = () => {
     [todos]
   )
 
-  // 以下のuseEffectの処理を追加
+  // ToDo一覧の取得
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
-      console.log(data)
+      //console.log(data)
       setTodos(data)
     })
     .catch((error) => {
@@ -158,7 +159,7 @@ export const Top = () => {
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
-          if (editTodoId === todo.id) {
+          if (editTodoId === todo.id) {  //厳密等価等価演算子を使用し、格納されているIDが一致しているかどうかを条件分岐によって判定する
             return (
               <li key={todo.id}>
                 <Form

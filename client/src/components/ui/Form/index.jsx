@@ -38,7 +38,7 @@ export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit
           disabled={!value.title}
           className={styles['submit-button']}
         >
-          タスクを追加
+          {editTodoId ? '保存' : 'タスクを追加'}
         </Button>
       </div>
     </form>
