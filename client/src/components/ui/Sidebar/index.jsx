@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'  //ページ遷移を行うためのコンポーネント
 import { Icon } from '../Icon'
 
 import styles from './index.module.css'
