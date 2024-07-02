@@ -87,6 +87,20 @@ const handleDeleteButtonClick = useCallback((id) => {
   })
 }, [])
 
+const handleToggleButtonClick = useCallback(
+  (id) => {
+    axios
+      .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+        isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+      })
+      .then(({ data }) => {
+        const toggleTodos = todos.map((todo) => todo.id === id ? data : todo)
+        setTodos(toggleTodos)
+        console.log(data)
+      })
+  },
+  [todos]
+)
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -120,6 +134,7 @@ const handleDeleteButtonClick = useCallback((id) => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}

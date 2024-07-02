@@ -31,9 +31,21 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick,onT
           </Button>
         )}
       <div className={styles.task}>
-        <div className={styles.title}>{todo.title}</div>
+        <div
+          className={`${styles.title} ${
+            todo.isCompleted ? styles['task-completed'] : ''
+          }`}
+        >
+          {todo.title}
+        </div>
         {todo.description && (
-          <div className={styles.description}>{todo.description}</div>
+          <div
+          className={`${styles.description} ${
+            todo.isCompleted ? styles['task-completed'] : ''
+          }`}
+        >
+          {todo.description}
+        </div>
         )}
       </div>
 
