@@ -3,6 +3,8 @@ import { axios } from '../../../utils/axiosConfig' // 追加
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
+import { Button } from '../../ui/Button'
+import { Icon } from '../../ui/Icon'
 
 import styles from './index.module.css'
 
@@ -23,6 +25,17 @@ export const Top = () => {
         {todos.map((todo) => {
           return <ListItem key={todo.id} todo={todo} />
         })}
+        <li>
+          <Button buttonStyle='indigo-blue' className={styles['add-task']}>
+            <Icon
+              iconName='plus'
+              color='orange'
+              size='medium'
+              className={styles['plug-icon']}
+            />
+              タスクを追加
+          </Button>
+        </li>
       </ul>
     </Layout>
   )
