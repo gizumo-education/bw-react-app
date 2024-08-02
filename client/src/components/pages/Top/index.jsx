@@ -18,11 +18,14 @@ export const Top = () => {
     description: '',
   });
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false);
+  
   const handleAddTaskButtonClick = useCallback(() => {
-    setIsAddTaskFormOpen(true)
+    setEditTodoId('');
+    setIsAddTaskFormOpen(true);
   }, []);
   const handleCancelButtonClick = useCallback(() => {
-    setIsAddTaskFormOpen(false)
+    setEditTodoId('');
+    setIsAddTaskFormOpen(false);
   }, []);
   const handleInputChange = useCallback((event) => {
     const { name, value } =event.target;
@@ -48,6 +51,7 @@ export const Top = () => {
   );
 
   const handleEditButtonClick = useCallback((id) => {
+    setIsAddTaskFormOpen('false');
     setEditTodoId(id);
   }, [])
 
