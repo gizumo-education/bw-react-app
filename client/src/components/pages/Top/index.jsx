@@ -18,7 +18,7 @@ export const Top = () => {
     description: '',
   });
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false);
-  
+
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' });
     setEditTodoId('');
@@ -40,7 +40,6 @@ export const Top = () => {
         // console.log(data)
         setTodos((prevTodos) => [ ...prevTodos, data ]);
         setIsAddTaskFormOpen(false);
-        // 入力値をリセット
         setInputValues({
           title: '',
           description: '',
@@ -62,7 +61,33 @@ export const Top = () => {
     })
   },
   [todos]
-)
+);
+
+const handleEditedTodoSubmit = useCallback(
+  (event) => {
+    event.preventDefault();
+    axios
+      .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+      .then(({ data }) => {
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === editTodoId ? { ...todo, title: data.title, description: data.description } : todo
+          )
+        );
+
+        setEditTodoId('');
+        setIsAddTaskFormOpen(false)
+        setInputValues({
+          title: '',
+          description: '',
+        });
+      })
+      .catch((error) => {
+        console.error('タスクの編集に失敗しました:', error);
+      });
+  },
+  [editTodoId, inputValues]
+);
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -80,8 +105,10 @@ export const Top = () => {
               <li key={todo.id}>
                 <Form
                   value={inputValues}
+                  editTodoId={editTodoId}
                   onChange={handleInputChange}
                   onCancelClick={handleCancelButtonClick}
+                  onSubmit={handleEditedTodoSubmit}
                 />
               </li>
             )
