@@ -20,12 +20,14 @@ export const Top = () => {
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false);
   
   const handleAddTaskButtonClick = useCallback(() => {
+    setInputValues({ title: '', description: '' });
     setEditTodoId('');
-    setIsAddTaskFormOpen(true);
+    setIsAddTaskFormOpen(true)
   }, []);
+
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('');
-    setIsAddTaskFormOpen(false);
+    setIsAddTaskFormOpen(false)
   }, []);
   const handleInputChange = useCallback((event) => {
     const { name, value } =event.target;
@@ -51,9 +53,16 @@ export const Top = () => {
   );
 
   const handleEditButtonClick = useCallback((id) => {
-    setIsAddTaskFormOpen('false');
+    setIsAddTaskFormOpen(false);
     setEditTodoId(id);
-  }, [])
+    const targetTodo =todos.find((todo) => todo.id === id)
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    })
+  },
+  [todos]
+)
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
