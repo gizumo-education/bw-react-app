@@ -1,15 +1,27 @@
-import { useState, useEffect } from 'react' // 追加
-import { axios } from '../../../utils/axiosConfig' // 追加
+import { useState, useEffect, useCallback } from 'react'
+import { axios } from '../../../utils/axiosConfig'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
+import { Form } from '../../ui/Form'
 
 import styles from './index.module.css'
 
 export const Top = () => {
   const [todos, setTodos] = useState([]);
+  const [inputValues, setInputValues] = useState({
+    title: '',
+    description: '',
+  });
+  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false);
+  const handleAddTaskButtonClick = useCallback(() => {
+    setIsAddTaskFormOpen(true)
+  }, []);
+  const handleCancelButtonClick = useCallback(() => {
+    setIsAddTaskFormOpen(false)
+  }, []);
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -26,15 +38,22 @@ export const Top = () => {
           return <ListItem key={todo.id} todo={todo} />
         })}
         <li>
-          <Button buttonStyle='indigo-blue' className={styles['add-task']}>
+        {isAddTaskFormOpen ? (
+          <Form value={inputValues} onCancelClick={handleCancelButtonClick} />
+        ) : (
+          <Button
+          buttonStyle='indigo-blue'
+          onClick={handleAddTaskButtonClick}
+          className={styles['add-task']}>
             <Icon
               iconName='plus'
               color='orange'
               size='medium'
-              className={styles['plug-icon']}
+              className={styles['plus-icon']}
             />
-              タスクを追加
+            タスクを追加
           </Button>
+        )}
         </li>
       </ul>
     </Layout>
