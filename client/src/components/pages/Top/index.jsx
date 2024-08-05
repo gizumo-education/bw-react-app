@@ -63,17 +63,17 @@ export const Top = () => {
   [todos]
 );
 
-const handleEditedTodoSubmit = useCallback(
-  (event) => {
-    event.preventDefault();
-    axios
-      .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
-      .then(({ data }) => {
-        setTodos((prevTodos) =>
-          prevTodos.map((todo) =>
-            todo.id === editTodoId ? { ...todo, title: data.title, description: data.description } : todo
-          )
-        );
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+      axios
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .then(({ data }) => {
+          setTodos((prevTodos) =>
+            prevTodos.map((todo) =>
+              todo.id === editTodoId ? { ...todo, title: data.title, description: data.description } : todo
+            )
+          );
 
         setEditTodoId('');
         setIsAddTaskFormOpen(false)
@@ -85,9 +85,21 @@ const handleEditedTodoSubmit = useCallback(
       .catch((error) => {
         console.error('タスクの編集に失敗しました:', error);
       });
-  },
-  [editTodoId, inputValues]
-);
+    },
+    [editTodoId, inputValues]
+  );
+
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`)
+        .then(response => {
+            console.log('削除成功:', response.data);
+            // TODOの一覧を更新する
+            setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+        })
+        .catch(error => {
+            console.error('削除失敗:', error);
+        });
+}, []);
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -118,6 +130,7 @@ const handleEditedTodoSubmit = useCallback(
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
