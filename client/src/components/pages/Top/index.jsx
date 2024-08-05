@@ -92,22 +92,42 @@ export const Top = () => {
   const handleDeleteButtonClick = useCallback((id) => {
     axios.delete(`http://localhost:3000/todo/${id}`)
         .then(response => {
-            console.log('削除成功:', response.data);
-            // TODOの一覧を更新する
-            setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+          console.log('削除成功:', response.data);
+           setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
         })
         .catch(error => {
-            console.error('削除失敗:', error);
+          console.error('削除失敗:', error);
         });
 }, []);
 
-  useEffect(() => {
+const handleToggleButtonClick = useCallback(
+  (id) => {
+    axios
+      .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+        isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+      })
+      .then(({ data }) => {
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === id ? { ...todo, isCompleted: data.isCompleted } : todo
+          )
+        );
+        console.log('切り替え成功', data);
+      })
+      .catch((error) => {
+        console.error('切り替え失敗', error);
+      });
+  },
+  [todos]
+);
+
+useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data);
     })
-  }, [])
+}, [])
 
-  return (
+return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
@@ -131,6 +151,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
