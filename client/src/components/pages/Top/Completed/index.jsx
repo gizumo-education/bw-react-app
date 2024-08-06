@@ -1,4 +1,4 @@
-import { Layout } from '/src/components/ui/Layout'
+import { Layout } from '../../../ui/Layout'
 
 import styles from './index.module.css'
 
@@ -9,4 +9,3 @@ export const Completed = () => {
     </Layout>
   )
 }
-

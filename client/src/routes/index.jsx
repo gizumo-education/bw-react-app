@@ -5,5 +5,5 @@ import { Completed } from '../components/pages/Top/Completed'
 
 export const router = createBrowserRouter([
   { path: '/', element: <Top /> },
-  { path: '/completed', element: <Completed /> },
+  { path: '/completed', element: <Completed />},
 ])
