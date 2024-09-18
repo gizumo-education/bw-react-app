@@ -1,4 +1,4 @@
-import { useState,useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { axios } from '../../../utils/axiosConfig'
 
 import { Layout } from '../../ui/Layout'
@@ -11,17 +11,21 @@ import styles from './index.module.css'
 
 export const Top = () => {
   const [todos, setTodos] = useState([])
+  const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
     title: '',
-    description:'',
+    description: '',
   })
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
   const handleAddTaskButtonClick = useCallback(() => {
+    setInputValues({titele:'', description:''})
+    setEditTodoId('')
     setIsAddTaskFormOpen(true)
-  },[])
+  }, [])
 
   const handleCancelButtonClick = useCallback(() => {
+    setEditTodoId('')
     setIsAddTaskFormOpen(false)
   }, [])
 
@@ -29,37 +33,94 @@ export const Top = () => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
-  
+
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
-      axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
+      axios
+        .post('http://localhost:3000/todo', inputValues)
+        .then(({ data }) => {
         console.log(data)
-        setTodos([...todos,data]) //todosに追加したdataをふくめて渡す
+        setTodos([...todos, data]) //todosに追加したdataをふくめて渡す
         setIsAddTaskFormOpen(false)
         setInputValues({
           title: '',
-          description:'',
+          description: '',
         })
       })
     },
     [inputValues]
   )
 
-useEffect(() => {
-  axios.get('http://localhost:3000/todo').then(({ data }) => {
-    console.log(data)
-    setTodos(data)
-  })
-},[])
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .then(({ data }) => {
+          const newtodo = todos.map((todo) => {
+            if (editTodoId === todo.id) {
+              return data
+            }
+            return todo
+          })
+          // newtodoを新しく定義する
+          // 定義している内容はidが一致したものはdataを返し当てはまらないものはtodoを返す
+          // setTodosで先ほど定義したnewtodoを使用する
+          // setEditTodoIdはidが一致しなければいいので空文字を入力して削除している
+        setTodos(newtodo)
+        setEditTodoId('')
+      })
+    },
+    [editTodoId, inputValues]
+  )
+
+  const handleEditButtonClick = useCallback((id) => {
+    setIsAddTaskFormOpen(false)
+    setEditTodoId(id)
+    const targetTodo = todos.find((todo) => todo.id === id)
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    })
+  },
+  [todos]
+)
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/todo').then(({ data }) => {
+      console.log(data)
+      setTodos(data)
+    })
+  }, [])
 
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
-          return <ListItem key={todo.id} todo={todo} />
+          if (editTodoId === todo.id) {
+            return (
+              <li key={todo.id}>
+                <Form
+                  value={inputValues}
+                  editTodoId={editTodoId}
+                  onChange={handleInputChange}
+                  onCancelClick={handleCancelButtonClick}
+                  onSubmit={handleEditedTodoSubmit}
+                />
+              </li>
+            )
+          }
+          return (
+            <ListItem
+              key={todo.id}
+              todo={todo}
+              onEditButtonClick={handleEditButtonClick}
+            />
+          )
         })}
+
         <li>
           {isAddTaskFormOpen ? (
             <Form
