@@ -7,6 +7,8 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
+
 import styles from './index.module.css'
 
 export const Top = () => {
@@ -41,6 +43,9 @@ export const Top = () => {
         setIsAddTaskFormOpen(false)
         setInputValues({ title: '', description: '' })
       })
+      .catch((error) => {
+        errorToast(error.message)
+      })
     },[inputValues]
   )
 
@@ -53,6 +58,18 @@ export const Top = () => {
           console.log(data)
           setTodos((prev) => (prev.map((todo)=>todo.id === editTodoId ? data : todo)))
           setEditTodoId('')
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+              default:
+                errorToast(error.message)
+                break
+           }
         })
     },
     [editTodoId, inputValues]
@@ -78,6 +95,18 @@ const handleDeleteButtonClick = useCallback(
       console.log(data)
       setTodos((prev) => prev.filter((todo) => todo.id !== id))
   })
+  .catch((error) => {
+    switch (error.statusCode) {
+      case 404:
+        errorToast(
+          '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+        )
+        break
+        default:
+          errorToast(error.message)
+          break
+    }
+  })
 }, [])
 
 const handleToggleButtonClick = useCallback(
@@ -90,6 +119,15 @@ const handleToggleButtonClick = useCallback(
         console.log(data)
         setTodos((prev) => prev.map((todo) => todo.id == id ? {...todo, isCompleted: !todo.isCompleted}:todo))
       })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+        }
+      })
   },
   [todos]
 )
@@ -98,6 +136,9 @@ const handleToggleButtonClick = useCallback(
     axios.get('http://localhost:3000/todo').then(({data})=>{
       console.log(data)
       setTodos(data)
+    })
+    .catch((error) => {
+      errorToast(error.message)
     })
   },[])
   
