@@ -58,7 +58,8 @@ export const Top = () => {
     [editTodoId, inputValues]
   )
 
-  const handleEditButtonClick = useCallback((id) => {
+  const handleEditButtonClick = useCallback(
+    (id) => {
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
     const targetTodo = todos.find((todo) => todo.id === id)
@@ -69,6 +70,16 @@ export const Top = () => {
   }, 
   [todos]
 )
+
+const handleDeleteButtonClick = useCallback(
+  (id) => {
+    // setIsAddTaskFormOpen(false)
+    console.log(id)
+    axios.delete(`http://localhost:3000/todo/${id}`).then((data)=>{
+      console.log(data)
+      setTodos((prev) => prev.filter((todo) => todo.id !== id))
+  })
+}, [])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({data})=>{
@@ -100,6 +111,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo} 
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
               />)
         })}
       <li>
