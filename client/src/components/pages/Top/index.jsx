@@ -81,7 +81,6 @@ export const Top = () => {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
-          console.log(data);
           const toggleTodos = todos.map((todo) => {
             return todo.id === data.id
             ? data
