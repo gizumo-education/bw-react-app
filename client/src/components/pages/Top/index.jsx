@@ -75,6 +75,7 @@ export const Top = () => {
     [editTodoId, inputValues]
   )
 
+
   const handleEditButtonClick = useCallback(
     (id) => {
     setIsAddTaskFormOpen(false)
@@ -87,6 +88,10 @@ export const Top = () => {
   }, 
   [todos]
 )
+
+// const handleAlertButton = () => {
+//   alert('アラート')
+// } 
 
 const handleDeleteButtonClick = useCallback(
   (id) => {
@@ -177,6 +182,7 @@ const handleToggleButtonClick = useCallback(
           onSubmit={handleCreateTodoSubmit}
           />
         ) : (
+          <>
           <Button 
             buttonStyle='indigo-blue'
             onClick={handleAddTaskButtonClick}
@@ -190,6 +196,8 @@ const handleToggleButtonClick = useCallback(
             />
             タスクを追加
           </Button>
+          {/* <Button onClick = {handleAlertButton}>アラート</Button> */}
+          </>
         )}
       </li>
       </ul>
