@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -7,10 +9,14 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
+
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+
   const [editTodoId, setEditTodoId] = useState('')
   console.log(todos);
 
@@ -44,8 +50,11 @@ export const Top = () => {
         setInputValues({ title: '', description: '' })
         setIsAddTaskFormOpen(false)
       })
+      .catch((error) => {
+        errorToast(error.message)
+      })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   const handleEditedTodoSubmit = useCallback(
@@ -64,8 +73,20 @@ export const Top = () => {
           setEditTodoId('')
           setIsAddTaskFormOpen(false)
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   const handleEditButtonClick = useCallback(
@@ -89,8 +110,20 @@ export const Top = () => {
           const updatedTodos = todos.filter((todo) => todo.id !== id)
           setTodos(updatedTodos) 
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
-    [todos]
+    [setTodos]
   )
 
   const handleToggleButtonClick = useCallback(
@@ -105,9 +138,25 @@ export const Top = () => {
             prevTodos.map((todo) => (todo.id === id ? data : todo))
           )
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
-    [todos]
+    [todos, setTodos]
   )
+
+  // const handleAlertButtonClick = () => {
+  //   alert('アラート')
+  // }
 
   
   useEffect (() => {
@@ -115,7 +164,10 @@ export const Top = () => {
       console.log(data)
       setTodos(data)
     })
-  }, [])
+    .catch((error) => {
+      errorToast(error.message)
+    })
+  }, [setTodos])
 
   return (
     <Layout>
@@ -170,6 +222,7 @@ export const Top = () => {
           )}
         </li>
       </ul>
+      {/* <button onClick={handleAlertButtonClick}>アラート</button> */}
     </Layout>
   )
 }
