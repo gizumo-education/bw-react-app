@@ -11,6 +11,7 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Completed = () => {
+  console.log(`start Completed`)
   const todos = useRecoilValue(completedTodoListState)
   const setTodos = useSetRecoilState(todoState)
 
@@ -21,6 +22,7 @@ export const Completed = () => {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
+          console.log(`ひゅおじ2`)
           setTodos((prev) =>
             prev.map((todo) => (todo.id === data.id ? data : todo))
           )
@@ -45,12 +47,15 @@ export const Completed = () => {
     axios
       .get('http://localhost:3000/todo')
       .then(({ data }) => {
+        console.log(`ひゅおじ`)
         setTodos(data)
       })
       .catch((error) => {
         errorToast(error.message)
       })
   }, [setTodos])
+
+  console.log(`end Completed`)
 
   return (
     <Layout>

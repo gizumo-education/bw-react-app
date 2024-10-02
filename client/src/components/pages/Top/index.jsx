@@ -14,7 +14,9 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
+  console.log(`start Top`)
   const todos = useRecoilValue(incompleteTodoListState)
+  console.log(todos)
   const setTodos = useSetRecoilState(todoState)
   const [editTodoId, setEditTodoId] = useState('')
   const [inputValues, setInputValues] = useState({
@@ -81,6 +83,7 @@ export const Top = () => {
 
   const handleEditButtonClick = useCallback(
     (id) => {
+    console.log(`handleEditButtonClick`)
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
     const targetTodo = todos.find((todo) => todo.id === id)
@@ -125,7 +128,7 @@ const handleToggleButtonClick = useCallback(
       })
       .then(({ data }) => {
         console.log(data)
-        setTodos((prev) => prev.map((todo) => todo.id == id ? {...todo, isCompleted: !todo.isCompleted}:todo))
+        setTodos((prev) => prev.map((todo) => todo.id == id ? data:todo))
       })
       .catch((error) => {
         switch (error.statusCode) {
