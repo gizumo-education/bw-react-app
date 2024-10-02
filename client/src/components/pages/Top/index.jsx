@@ -12,6 +12,7 @@ import styles from './index.module.css'
 export const Top = () => {
   const [todos, setTodos] = useState([])
   const [editTodoId, setEditTodoId] = useState('')
+  // console.log(editTodoId);
   const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
@@ -34,46 +35,42 @@ export const Top = () => {
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
 
-  const handleCreateTodoSubmit = useCallback(
-    (event) => {
-      event.preventDefault()
-      axios
-        .post('http://localhost:3000/todo', inputValues)
-        .then(({ data }) => {
-        console.log(data)
-        setTodos([...todos, data]) //todosに追加したdataをふくめて渡す
-        setIsAddTaskFormOpen(false)
-        setInputValues({
-          title: '',
-          description: '',
-        })
+  const handleCreateTodoSubmit = useCallback((event) => {
+    event.preventDefault()
+    axios
+      .post('http://localhost:3000/todo', inputValues)
+      .then(({ data }) => {
+      // console.log(data)
+      setTodos([...todos, data]) //todosに追加したdataをふくめて渡す
+      setIsAddTaskFormOpen(false)
+      setInputValues({
+        title: '',
+        description: '',
       })
-    },
-    [inputValues]
-  )
+    })
+  }, [inputValues])
 
-  const handleEditedTodoSubmit = useCallback(
-    (event) => {
+  const handleEditedTodoSubmit = useCallback((event) => {
       event.preventDefault()
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+          // この時点でサーバー側は変更される
         .then(({ data }) => {
-          const newtodo = todos.map((todo) => {
-            if (editTodoId === todo.id) {
-              return data
-            }
-            return todo
-          })
+          // console.log(data)
+          const newtodo = todos.map(todo => data.id === todo.id ? data : todo) //アロー関数＋三項演算子
+            // dataは更新する内容の情報
+            // 元からある情報のIDと変えるべき情報のIDが一致した際
+              // return data
+            // 更新するdataを返す。
+            // return todo
+              // 一致しない場合はもとからあるtodoを返す
           // newtodoを新しく定義する
-          // 定義している内容はidが一致したものはdataを返し当てはまらないものはtodoを返す
-          // setTodosで先ほど定義したnewtodoを使用する
+          // setTodosで先ほど定義したnewtodoを使用すし更新する(再レンダ)
           // setEditTodoIdはidが一致しなければいいので空文字を入力して削除している
         setTodos(newtodo)
         setEditTodoId('')
       })
-    },
-    [editTodoId, inputValues]
-  )
+    }, [editTodoId, inputValues])
 
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false)
@@ -83,13 +80,25 @@ export const Top = () => {
       title: targetTodo.title,
       description: targetTodo.description,
     })
-  },
-  [todos]
-)
+  }, [todos])
+
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios
+      .delete(`http://localhost:3000/todo/${id}`)
+      // console.log(id)
+      .then(({ data }) => {
+        console.log(data)
+        setTodos(data)
+      })
+    // 消去するidを取得
+    // 該当するdataを消去
+  }, [])
 
   useEffect(() => {
-    axios.get('http://localhost:3000/todo').then(({ data }) => {
-      console.log(data)
+    axios
+      .get('http://localhost:3000/todo')
+      .then(({ data }) => {
+      // console.log(data)
       setTodos(data)
     })
   }, [])
@@ -117,6 +126,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
@@ -149,3 +159,18 @@ export const Top = () => {
     </Layout>
   )
 }
+
+
+  // Section16
+  // 編集ボタンがクリックされた時に、handleEditButtonClick関数が実行され、
+  // editTodoIdに編集するToDoのidを格納できるようになりました。
+  // 次に、editTodoIdに格納されたToDoのidと、
+  // 表示されているToDoのidが一致するかどうかで、編集フォームの表示・非表示を切り替えていきましょう。
+  // if文でeditTodoIdに格納されたToDoのidとtodosに格納されたToDoのidが一致するかどうかを判定し、
+  // 一致する場合は編集フォームを表示するようにしています。
+  // 次にToDoの追加フォームと編集フォームの表示を切り替える処理を実装していきましょう。
+
+  // 一致するしないの判定は理解。
+  // そのあとの表示するしないの表示処理および追加と編集の表示を切り替える処理の実装部分の理解ができていない。
+  // フックの動きの理解がたりていない
+
