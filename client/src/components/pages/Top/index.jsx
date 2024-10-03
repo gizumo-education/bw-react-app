@@ -20,7 +20,7 @@ export const Top = () => {
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
 
   const handleAddTaskButtonClick = useCallback(() => {
-    setInputValues({titele:'', description:''})
+    setInputValues({title:'', description:''})
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
@@ -85,14 +85,31 @@ export const Top = () => {
   const handleDeleteButtonClick = useCallback((id) => {
     axios
       .delete(`http://localhost:3000/todo/${id}`)
+      // 消去するidを取得
+      // 該当するdataを消去
       // console.log(id)
       .then(({ data }) => {
         console.log(data)
-        setTodos(data)
+        setTodos([...todos, data])
       })
-    // 消去するidを取得
-    // 該当するdataを消去
   }, [])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+
+        .then(({ data }) => {
+          console.log(data)
+          const ClearTask = todos.map(todo => data.id === todo.id ? data : todo)
+          // ClearTaskを新しく定義、編集の際と同様にmapメソッドで順に読み取っていき、取得したidが一致すればdataを一致しなければtodoを返す。
+          setTodos(ClearTask)
+        })
+    },
+    [todos]
+  )
 
   useEffect(() => {
     axios
@@ -127,6 +144,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
