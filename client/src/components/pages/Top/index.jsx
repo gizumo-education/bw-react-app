@@ -7,6 +7,7 @@ import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
 
+import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
@@ -48,6 +49,9 @@ export const Top = () => {
         description: '',
       })
     })
+    .catch((error) => {
+      errorToast(error.message)
+    })
   }, [inputValues])
 
   const handleEditedTodoSubmit = useCallback((event) => {
@@ -70,6 +74,18 @@ export const Top = () => {
         setTodos(newtodo)
         setEditTodoId('')
       })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
+      })
     }, [editTodoId, inputValues])
 
   const handleEditButtonClick = useCallback((id) => {
@@ -90,7 +106,19 @@ export const Top = () => {
       // console.log(id)
       .then(({ data }) => {
         console.log(data)
-        setTodos([...todos, data])
+        setTodos(data)
+      })
+      .catch((error) => {
+        switch (error.statusCode) {
+          case 404:
+            errorToast(
+              '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+            )
+            break
+          default:
+            errorToast(error.message)
+            break
+        }
       })
   }, [])
 
@@ -107,6 +135,18 @@ export const Top = () => {
           // ClearTaskを新しく定義、編集の際と同様にmapメソッドで順に読み取っていき、取得したidが一致すればdataを一致しなければtodoを返す。
           setTodos(ClearTask)
         })
+        .catch((error) => {
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [todos]
   )
@@ -117,6 +157,9 @@ export const Top = () => {
       .then(({ data }) => {
       // console.log(data)
       setTodos(data)
+    })
+    .catch((error) => {
+      errorToast(error.message)
     })
   }, [])
 
