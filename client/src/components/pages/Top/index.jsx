@@ -25,6 +25,10 @@ export const Top = () => {
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('')
     setIsAddTaskFormOpen(false)
+    setInputValues({
+      title: '',
+      description: '',
+    })
   }, [])
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
