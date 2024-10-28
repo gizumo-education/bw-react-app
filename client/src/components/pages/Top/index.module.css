@@ -4,6 +4,7 @@
 
 .list {
   margin-top: 16px;
+  list-style: none;
 }
 
 .add-task {

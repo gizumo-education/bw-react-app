@@ -7,6 +7,9 @@ import { BsCircle } from 'react-icons/bs'
 import { HiPlus, HiOutlineTrash } from 'react-icons/hi'
 import { FiEdit3 } from 'react-icons/fi'
 import { GrCircleAlert } from 'react-icons/gr'
+import { IoListOutline } from "react-icons/io5";
+import { TiInputChecked } from "react-icons/ti";
+
 
 import styles from './index.module.css'
 
@@ -17,6 +20,8 @@ const ICON_MAP = {
   trash: <HiOutlineTrash />,
   circle: <BsCircle />,
   circleAlert: <GrCircleAlert />,
+  todoList: <IoListOutline />,
+  completeList: <TiInputChecked />,
 }
 
 const SIZE_LIST = {
@@ -53,6 +58,8 @@ Icon.propTypes = {
     'trash',
     'circle',
     'circleAlert',
+    'todoList',
+    'completeList',
   ]).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   color: PropTypes.oneOf(['gray-light', 'orange', 'indigo-blue', 'danger']),
