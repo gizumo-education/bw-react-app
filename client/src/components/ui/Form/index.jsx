@@ -4,7 +4,7 @@ import { Button } from '../Button'
 
 import styles from './index.module.css'
 
-export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
+export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit }) => {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles['input-field']}>
@@ -46,7 +46,8 @@ export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
           disabled={!value.title}
           className={styles['submit-button']}
         >
-          タスクを追加
+          {/* editTodoIdをpropsとして受け取り、editTodoIdの値によって以下のように表示する文言を変更するようにしています。 */}
+          {editTodoId ? '保存' : 'タスクを追加'}
         </Button>
       </div>
     </form>
@@ -59,7 +60,12 @@ Form.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
   }).isRequired,
+  editTodoId: PropTypes.string, // 追加
   onChange: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+}
+// ↓ 追加
+Form.defaultProps = {
+  editTodoId: '',
 }
