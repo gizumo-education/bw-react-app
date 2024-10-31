@@ -6,13 +6,13 @@ import { todoState, completedTodoListState } from '../../../stores/todoState'
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 
-import { errorToast } from '../../../utils/errorToast' 
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
 export const Completed = () => {
   const todos = useRecoilValue(completedTodoListState)
-  const setTodos = useSetRecoilState(todoState) 
+  const setTodos = useSetRecoilState(todoState)
 
   const handleToggleButtonClick = useCallback(
     (id) => {
@@ -21,11 +21,11 @@ export const Completed = () => {
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
-          setTodos((prev) =>
+          setTodos(prev =>
             prev.map((todo) => (todo.id === data.id ? data : todo))
           )
         })
-        .catch((error) => {
+        .catch(error => {
           switch (error.statusCode) {
             case 404:
               errorToast(
@@ -47,7 +47,7 @@ export const Completed = () => {
       .then(({ data }) => {
         setTodos(data)
       })
-      .catch((error) => {
+      .catch(error => {
         errorToast(error.message)
       })
   }, [setTodos])
@@ -57,7 +57,7 @@ export const Completed = () => {
       <h1 className={styles.heading}>完了済み一覧</h1>
       {todos.length ? (
         <ul className={styles.list}>
-          {todos.map((todo) => (
+          {todos.map(todo => (
             <ListItem
               key={todo.id}
               todo={todo}

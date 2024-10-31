@@ -8,17 +8,17 @@ import styles from './index.module.css'
 export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, onToggleButtonClick }) => {
   return (
     <li className={styles['list-item']}>
-    <div className={styles['task-action']}>
-      {todo.isCompleted ? (
+      <div className={styles['task-action']}>
+        {todo.isCompleted ? (
           // ToDoボタンの実装
           <Button
-          buttonStyle='icon-only'
-          className={styles['complete-button']}
-          onClick={() => onToggleButtonClick(todo.id)}
+            buttonStyle='icon-only'
+            className={styles['complete-button']}
+            onClick={() => onToggleButtonClick(todo.id)}
           >
             <Icon iconName='check' size='large' color='orange' />
           </Button>
-      ) : (
+        ) : (
           <Button
             buttonStyle='icon-only'
             className={styles['complete-button']}
@@ -31,29 +31,29 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
             />
           </Button>
         )}
-    </div>
+      </div>
 
       <div className={styles.task}>
-      <div
-        // ↓ classNameに'task-completed'を追加
-        className={`${styles.title}
+        <div
+          // ↓ classNameに'task-completed'を追加
+          className={`${styles.title}
                     ${todo.isCompleted ? styles['task-completed'] : ''}`}
-      >{todo.title}</div>
+        >{todo.title}</div>
 
         {todo.description && (
-      <div
-        // ↓ classNameに'task-completed'を追加
-        className={`${styles.description}
+          <div
+            // ↓ classNameに'task-completed'を追加
+            className={`${styles.description}
                     ${todo.isCompleted ? styles['task-completed'] : ''}`}
-      >{todo.description}</div>
+          >{todo.description}</div>
         )}
       </div>
 
       <div className={styles['task-action']}>
-      {!todo.isCompleted && (
-        <>
-          {/* 編集ボタンの実装 */}
-          <Button
+        {!todo.isCompleted && (
+          <>
+            {/* 編集ボタンの実装 */}
+            <Button
               buttonStyle='icon-only'
               onClick={() => onEditButtonClick(todo.id)}
             >
@@ -66,8 +66,8 @@ export const ListItem = memo(({ todo, onEditButtonClick, onDeleteButtonClick, on
             >
               <Icon iconName='trash' color='indigo-blue' size='medium' />
             </Button>
-        </>
-      )}
+          </>
+        )}
       </div>
 
     </li>
@@ -88,6 +88,6 @@ ListItem.propTypes = {
 }
 
 ListItem.defaultProps = {
-  onEditButtonClick: () => {},
-  onDeleteButtonClick: () => {},
+  onEditButtonClick: () => { },
+  onDeleteButtonClick: () => { },
 }

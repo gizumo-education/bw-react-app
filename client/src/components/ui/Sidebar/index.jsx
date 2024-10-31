@@ -24,7 +24,7 @@ export const Sidebar = memo(() => {
       <li className={['sidebar-list']}>
         <p className={styles.category}>ToDo</p>
         <ul className={styles.list}>
-          {NaviList.map((list) => {
+          {NaviList.map(list => {
             return (
               <li className={styles['list-item']} key={list.id}>
                 {/* NavLink:aタグと違いページ遷移の際にページ全体がリロードしない*/}
@@ -37,7 +37,7 @@ export const Sidebar = memo(() => {
                       : [styles['navi-item']]
                   }}
                 >
-                  {({isActive }) => (
+                  {({ isActive }) => (
                     <>
                       <Icon
                         iconName={list.iconName}
