@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil' // Recoil
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState' // Recoil
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
@@ -10,7 +12,7 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  // const [todos, setTodos] = useState([])
   // editTodoId:編集ボタンがクリックされた時に編集するToDoのidを格納
   const [editTodoId, setEditTodoId] = useState('')
 
@@ -22,7 +24,13 @@ export const Top = () => {
 
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false) // 追加フォームの表示・非表示を管理するためのstate
 
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+
+
   // タスクを追加」ボタンをクリックした時に実行するhandleAddTaskButtonClick関数
+  // 関数をメモ化
+  // メモ化 - 関数の呼び出しで同じ入力が再度発生した時にキャッシュした結果を返すこと。パフォーマンスの最適化、メモリ使用量の削減
   const handleAddTaskButtonClick = useCallback(() => {
     // ToDoの追加フォームを開いた時にinputValuesに空文字を格納する
     setInputValues({ title: '', description: '' })
@@ -42,7 +50,9 @@ export const Top = () => {
   // event.targetからnameとvalueを取得して、setInputValues関数を使ってinputValuesの値を更新しています。
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target // event.target - イベントが発生した要素を取得できるオブジェクト
+    // setInputValues - 追加フォームの値
     setInputValues((prev) => ({ ...prev, [name]: value }))
+    // console.log(name)
   }, [])
 
   // 追加ボタン
@@ -72,7 +82,7 @@ export const Top = () => {
           errorToast(error.message)
         })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   // 編集保存ボタン
@@ -120,7 +130,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   // ↓ editTodoIdに編集するToDoのidを格納
@@ -129,6 +139,7 @@ export const Top = () => {
     (id) => {
       // ToDoの編集フォームを表示するボタンをクリックした時に、isAddTaskFormOpenをfalseに変更し、ToDoの追加フォームを非表示にする
       setIsAddTaskFormOpen(false)
+      // 編集フォームの保持
       setEditTodoId(id)
       // ↓ 編集ボタンがクリックされた時に、todosに格納されたToDoの中から、編集するToDoのidと一致するToDoをArrayメソッドのfind()を使用して取得し、inputValuesに格納しています。
       // これで、ToDoの編集フォームを開いた時に、フォームに編集するToDoのタイトルと説明が表示されるようになりました。
@@ -166,24 +177,27 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  }, [setTodos])
 
   // ↓ ToDoの完了・未完了切り替え機能の実装
   // handleToggleButtonClick関数は、引数に完了・未完了の切り替え対象のToDoのidを受け取ります。
   // axiosのpatchメソッドの第一引数にはAPIのURLを指定し、第二引数には完了・未完了を切り替えるToDoのisCompletedの値を指定します。
+
   // API通信が成功した場合は、APIからのレスポンスをコンソールに出力しています。
+  // 関数をメモ化
+  // メモ化 - 関数の呼び出しで同じ入力が再度発生した時に、キャッシュした結果を返すことです。
   const handleToggleButtonClick = useCallback(
     (id) => {
+      // axios.patch:指定したURLのリソースの一部を更新するためのリクエストを送る際に使用。たとえば、ユーザー情報の一部を変更する場合などです。
       axios
         .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          // todos配列の中から、特定のidを持つToDoアイテムを見つけている
           isCompleted: todos.find((todo) => todo.id === id).isCompleted,
         })
         .then(({ data }) => {
           // ToDoの完了・未完了の切り替えが成功した場合、切り替え後のToDoの完了・未完了の状態を画面に反映させてください。
-
-          console.log(data)// 1
-          console.log(todos)// 3 val
-
+          // console.log(data)// 1
+          // console.log(todos)// 3 val
           setTodos(todos.map(todo =>
             todo.id === data.id ? data : todo
           ))
@@ -203,7 +217,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
 
   useEffect(() => {
@@ -215,7 +229,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
@@ -253,12 +267,13 @@ export const Top = () => {
           {/* 三項演算子 */}
           {/* true:ToDoの追加フォームを表示。false:「タスクを追加」ボタンを表示 */}
           {/* キャンセルボタンをクリックした時にisAddTaskFormOpenの値をfalseに更新する処理 */}
+          {/*  isAddTaskFormOpen - 追加フォームの表示・非表示を管理するためのstate */}
           {isAddTaskFormOpen ? (
             <Form
               value={inputValues}
               onChange={handleInputChange} // 引数にeventを受け取り、event.targetからnameとvalueを取得
               onCancelClick={handleCancelButtonClick}
-              onSubmit={handleCreateTodoSubmit} // 
+              onSubmit={handleCreateTodoSubmit} //
             />
           ) : (
             <Button

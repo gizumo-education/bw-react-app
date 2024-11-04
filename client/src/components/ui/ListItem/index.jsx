@@ -7,6 +7,7 @@ import { Icon } from '../Icon'
 
 import styles from './index.module.css'
 
+// memo - プロパティ（props）が変更されない限り、同じコンポーネントの再レンダリングをスキップする。
 export const ListItem = memo(
   ({ todo, onEditButtonClick, onDeleteButtonClick, onToggleButtonClick }) => {
     return (
