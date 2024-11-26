@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
@@ -11,7 +13,10 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+  // const [todos, setTodos] = useState([])
+  // console.log(useState([]))
   const [editTodoId, setEditTodoId] = useState('')
   // console.log(editTodoId);
   const [inputValues, setInputValues] = useState({
@@ -33,7 +38,18 @@ export const Top = () => {
 
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
-    setInputValues((prev) => ({ ...prev, [name]: value }))
+    // console.log(event);
+    // console.log(event.target);
+    // console.log('name: ' + name);
+    // console.log('value: ' + value);
+    
+    // setInputValues(prev => ({ ...prev, [name]: value }))
+    setInputValues((prev) => {
+      // console.log(prev);
+      const result = { ...prev, [name]: value };
+      // console.log(result);
+      return result
+    })
   }, [])
 
   const handleCreateTodoSubmit = useCallback((event) => {
@@ -52,7 +68,7 @@ export const Top = () => {
     .catch((error) => {
       errorToast(error.message)
     })
-  }, [inputValues])
+  }, [setTodos, inputValues])
 
   const handleEditedTodoSubmit = useCallback((event) => {
       event.preventDefault()
@@ -86,12 +102,16 @@ export const Top = () => {
             break
         }
       })
-    }, [editTodoId, inputValues])
+    }, [setTodos, editTodoId, inputValues])
 
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
-    const targetTodo = todos.find((todo) => todo.id === id)
+    const targetTodo = todos.find((todo) => {
+      const result = todo.id === id
+      console.log(result)
+      return result
+    }) //一致したidを持つtodoを見つける処理
     setInputValues({
       title: targetTodo.title,
       description: targetTodo.description,
@@ -105,7 +125,7 @@ export const Top = () => {
       // 該当するdataを消去
       // console.log(id)
       .then(({ data }) => {
-        console.log(data)
+        // console.log(data)
         setTodos(data)
       })
       .catch((error) => {
@@ -120,7 +140,7 @@ export const Top = () => {
             break
         }
       })
-  }, [])
+  }, [setTodos])
 
   const handleToggleButtonClick = useCallback(
     (id) => {
@@ -130,7 +150,7 @@ export const Top = () => {
         })
 
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           const ClearTask = todos.map(todo => data.id === todo.id ? data : todo)
           // ClearTaskを新しく定義、編集の際と同様にmapメソッドで順に読み取っていき、取得したidが一致すればdataを一致しなければtodoを返す。
           setTodos(ClearTask)
@@ -148,20 +168,19 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/todo')
+    axios.get('http://localhost:3000/todo')
       .then(({ data }) => {
-      // console.log(data)
-      setTodos(data)
-    })
-    .catch((error) => {
-      errorToast(error.message)
-    })
-  }, [])
+        // console.log(data)
+        setTodos(data)
+      })
+      .catch((error) => {
+        errorToast(error.message)
+      })
+  }, [setTodos])
 
   return (
     <Layout>
@@ -220,6 +239,12 @@ export const Top = () => {
     </Layout>
   )
 }
+
+    // const result = axios.get('http://localhost:3000/todo')
+    // console.log(result)
+    // result.then(({ data }) => {
+    // console.log(data)
+    // setTodos(data)})
 
 
   // Section16
