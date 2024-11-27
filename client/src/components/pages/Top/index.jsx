@@ -42,7 +42,7 @@ export const Top = () => {
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
         setInputValues({ title: '', description: '' })
         setIsAddTaskFormOpen(false)
-        console.log(data)
+        setTodos(prev => [...prev, data])
       })
     },
     [inputValues]
@@ -54,9 +54,9 @@ export const Top = () => {
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          setTodos(todos) // 編集したToDoのタイトルと説明をToDoの一覧に反映
-          setEditTodoId(false) // 編集フォームを非表示
-          setIsAddTaskFormOpen(false) // 編集フォームを非表示
+          setTodos((prev) => (prev.map((element) => element.id === editTodoId ? data : element)))
+          setEditTodoId(false)
+          setIsAddTaskFormOpen(false)
         })
     },
     [editTodoId, inputValues]
@@ -74,22 +74,35 @@ export const Top = () => {
 
   const handleDeleteButtonClick = useCallback((id) => {
     axios.delete(`http://localhost:3000/todo/${id}`, inputValues).then(({ data }) => {
-      setEditTodoId(false)
-      setIsAddTaskFormOpen(false)
+      console.log(data)
       setTodos(data)
     })
   }, [])
+
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          setTodos((prev) => (prev.map((element) => element.id === id ? data : element)))
+        })
+    },
+    [todos]
+  )
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
     })
-  }, [todos])
+  }, [])
 
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
+        {console.log(todos)}
         {todos.map((todo) => {
           if (editTodoId === todo.id) {
             return (
@@ -110,6 +123,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
