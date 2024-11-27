@@ -56,7 +56,7 @@ export const Top = () => {
         .then(({ data }) => {
           setTodos(todos) // 編集したToDoのタイトルと説明をToDoの一覧に反映
           setEditTodoId(false) // 編集フォームを非表示
-          setIsAddTaskFormOpen(false)
+          setIsAddTaskFormOpen(false) // 編集フォームを非表示
         })
     },
     [editTodoId, inputValues]
@@ -71,6 +71,14 @@ export const Top = () => {
       description: targetTodo.description,
     })
   }, [todos])
+
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`, inputValues).then(({ data }) => {
+      setEditTodoId(false)
+      setIsAddTaskFormOpen(false)
+      setTodos(data)
+    })
+  }, [])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -101,6 +109,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
