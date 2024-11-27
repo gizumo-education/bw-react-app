@@ -11,40 +11,69 @@ import styles from './index.module.css'
 
 export const Top = () => {
   const [todos, setTodos] = useState([])
+  const [editTodoId, setEditTodoId] = useState('')
+
   const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
   })
+
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
+
   const handleAddTaskButtonClick = useCallback(() => {
-    setInputValues({
-      title: '',
-      description: '',
-    })
+    setInputValues({ title: '', description: '' })
+    setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
+
   const handleCancelButtonClick = useCallback(() => {
+    setEditTodoId('')
     setIsAddTaskFormOpen(false)
   }, [])
+
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
+
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
       axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
+        setInputValues({ title: '', description: '' })
         setIsAddTaskFormOpen(false)
-
         console.log(data)
       })
     },
     [inputValues]
   )
 
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .then(({ data }) => {
+          setTodos(todos) // 編集したToDoのタイトルと説明をToDoの一覧に反映
+          setEditTodoId(false) // 編集フォームを非表示
+          setIsAddTaskFormOpen(false)
+        })
+    },
+    [editTodoId, inputValues]
+  )
+
+  const handleEditButtonClick = useCallback((id) => {
+    setEditTodoId(id)
+    setIsAddTaskFormOpen(false)
+    const targetTodo = todos.find((todo) => todo.id === id)
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    })
+  }, [todos])
+
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
-      console.log(data)
       setTodos(data)
     })
   }, [todos])
@@ -54,7 +83,26 @@ export const Top = () => {
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
         {todos.map((todo) => {
-          return <ListItem key={todo.id} todo={todo} />
+          if (editTodoId === todo.id) {
+            return (
+              <li key={todo.id}>
+                <Form
+                  value={inputValues}
+                  editTodoId={editTodoId}
+                  onChange={handleInputChange}
+                  onCancelClick={handleCancelButtonClick}
+                  onSubmit={handleEditedTodoSubmit}
+                />
+              </li>
+            )
+          }
+          return (
+            <ListItem
+              key={todo.id}
+              todo={todo}
+              onEditButtonClick={handleEditButtonClick}
+            />
+          )
         })}
         <li>
           {isAddTaskFormOpen ? (
