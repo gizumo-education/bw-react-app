@@ -12,32 +12,37 @@ import { errorToast } from '../../../utils/errorToast'
 import styles from './index.module.css'
 
 export const Top = () => {
-  const [todos, setTodos] = useState([])
-  const [editTodoId, setEditTodoId] = useState('')
+  const [todos, setTodos] = useState([]) // ToDo一覧
 
-  const [inputValues, setInputValues] = useState({
+  const [editTodoId, setEditTodoId] = useState('') // 編集id
+
+  const [inputValues, setInputValues] = useState({ // 入力値
     title: '',
     description: '',
   })
 
-  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
+  const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false) // フォーム
 
+  // ToDo追加フォーム
   const handleAddTaskButtonClick = useCallback(() => {
     setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
 
+  // ToDo追加キャンセル
   const handleCancelButtonClick = useCallback(() => {
     setEditTodoId('')
     setIsAddTaskFormOpen(false)
   }, [])
 
+  // ToDo入力値反映
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target
     setInputValues((prev) => ({ ...prev, [name]: value }))
   }, [])
 
+  // ToDo追加
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
@@ -54,13 +59,15 @@ export const Top = () => {
     [inputValues]
   )
 
+  // ToDo編集保存
   const handleEditedTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
       axios
         .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
         .then(({ data }) => {
-          setTodos((prev) => (prev.map((element) => element.id === editTodoId ? data : element)))
+          setTodos((prev) => (
+            prev.map((element) => element.id === editTodoId ? data : element)))
           setEditTodoId(false)
           setIsAddTaskFormOpen(false)
         })
@@ -80,6 +87,7 @@ export const Top = () => {
     [editTodoId, inputValues]
   )
 
+  // 編集id格納
   const handleEditButtonClick = useCallback((id) => {
     setEditTodoId(id)
     setIsAddTaskFormOpen(false)
@@ -90,10 +98,10 @@ export const Top = () => {
     })
   }, [todos])
 
+  // ToDo削除
   const handleDeleteButtonClick = useCallback((id) => {
     axios.delete(`http://localhost:3000/todo/${id}`, inputValues)
       .then(({ data }) => {
-        console.log(data)
         setTodos(data)
       })
       .catch((error) => {
@@ -110,6 +118,7 @@ export const Top = () => {
       })
   }, [])
 
+  // ToDo状態変更
   const handleToggleButtonClick = useCallback(
     (id) => {
       axios
@@ -135,20 +144,20 @@ export const Top = () => {
     [todos]
   )
 
+  // ToDo一覧表示
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       setTodos(data)
     })
-    .catch((error) => {
-      errorToast(error.message)
-    })
+      .catch((error) => {
+        errorToast(error.message)
+      })
   }, [])
 
   return (
     <Layout>
       <h1 className={styles.heading}>ToDo一覧</h1>
       <ul className={styles.list}>
-        {console.log(todos)}
         {todos.map((todo) => {
           if (editTodoId === todo.id) {
             return (
