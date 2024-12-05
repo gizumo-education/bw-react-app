@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types'
 import { memo } from 'react'
 
+
 import { Header } from '../Header'
 import { Sidebar } from '../Sidebar'
 
 import styles from './index.module.css'
+import { Top } from '../../pages/Top'
 
 export const Layout = memo(({ children }) => {
   return (
@@ -18,6 +20,7 @@ export const Layout = memo(({ children }) => {
   )
 })
 
+// 型を明示的にする記述
 Layout.displayName = 'Layout'
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
