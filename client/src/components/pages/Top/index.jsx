@@ -26,6 +26,8 @@ export const Top = () => {
 
   //「タスクを追加」ボタンをクリックした時に実行する関数
   const handleAddTaskButtonClick = useCallback(() => {
+    //ToDoのタイトルと説明が表示させなくする。
+    setInputValues({ title: '', description: '' })
     setEditTodoId('')
     setIsAddTaskFormOpen(true)
   }, [])
@@ -62,13 +64,45 @@ export const Top = () => {
         setInputValues([null])
       })
     }, [inputValues])
-  //↑ inputValuesが入力されたときのみ実行
+
+
+  //編集機能の実装
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios.patch(`http://localhost:3000/todo/${editTodoId}`, inputValues).then(({ data }) => {
+        console.log(data)//オブジェクト型 編集して更新したデータが入っている
+        //一番下を更新するのではなく今ある地点のを変えたい
+
+        //data[i]
+        //const objectB = data.map((val) => data.id[val]);
+        //setTodos(objectB)
+
+        //まず、IDが一致しているかのチェック
+        //してた場合の処理を記載
+        //変更されたIDを探して取得する
+        setTodos(
+          (prevTodos) => prevTodos.map((val) =>
+            val.id === editTodoId ? data : val
+          ),
+          setEditTodoId('')
+        )
+      })
+    },
+    [editTodoId, inputValues]
+  )
+
 
   //ToDoのidを格納できる
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false)
     setEditTodoId(id)
-  }, [])
+    const targetTodo = todos.find((todo) => todo.id === id)
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    })
+  }, [todos])
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -88,8 +122,10 @@ export const Top = () => {
               <li key={todo.id}>
                 <Form
                   value={inputValues}
+                  editTodoId={editTodoId}
                   onChange={handleInputChange}
                   onCancelClick={handleCancelButtonClick}
+                  onSubmit={handleEditedTodoSubmit}
                 />
               </li>
             )

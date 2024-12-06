@@ -7,7 +7,7 @@ import styles from './index.module.css'
 //onChange	function	ToDoの追加フォームに入力された値をstateに反映させる関数を受け取る
 //onCancelClick	function	ToDoの追加フォームを閉じる関数を受け取る
 //onSubmit	function	ToDoの追加フォームの送信処理を行う関数を受け取る
-export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
+export const Form = memo(({ value, editTodoId, onChange, onCancelClick, onSubmit }) => {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <div className={styles['input-field']}>
@@ -41,7 +41,7 @@ export const Form = memo(({ value, onChange, onCancelClick, onSubmit }) => {
           disabled={!value.title}
           className={styles['submit-button']}
         >
-          タスクを追加
+          {editTodoId ? '保存' : 'タスクを追加'}
         </Button>
       </div>
     </form>
@@ -54,7 +54,12 @@ Form.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
   }).isRequired,
+  editTodoId: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onCancelClick: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+}
+
+Form.defaultProps = {
+  editTodoId: '',
 }
