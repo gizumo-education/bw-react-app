@@ -72,17 +72,14 @@ export const Top = () => {
       event.preventDefault()
       axios.patch(`http://localhost:3000/todo/${editTodoId}`, inputValues).then(({ data }) => {
         console.log(data)//オブジェクト型 編集して更新したデータが入っている
-        //一番下を更新するのではなく今ある地点のを変えたい
-
-        //data[i]
-        //const objectB = data.map((val) => data.id[val]);
-        //setTodos(objectB)
 
         //まず、IDが一致しているかのチェック
         //してた場合の処理を記載
         //変更されたIDを探して取得する
         setTodos(
+          //prevTodosには前のデータを
           (prevTodos) => prevTodos.map((val) =>
+            //変更前・変更後のIDを比較⇒その後三項演算子で実行
             val.id === editTodoId ? data : val
           ),
           setEditTodoId('')
@@ -91,7 +88,6 @@ export const Top = () => {
     },
     [editTodoId, inputValues]
   )
-
 
   //ToDoのidを格納できる
   const handleEditButtonClick = useCallback((id) => {
@@ -103,6 +99,19 @@ export const Top = () => {
       description: targetTodo.description,
     })
   }, [todos])
+
+
+  //削除機能の実装
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios.delete(`http://localhost:3000/todo/${id}`).then(({ data }) => {
+      console.log(data)
+      setTodos(
+        data
+      )
+
+  })
+  }, [])
+
 
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
@@ -136,6 +145,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
