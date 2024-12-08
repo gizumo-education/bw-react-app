@@ -44,13 +44,14 @@ export const Top = () => {
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
-      axios.post('http://localhost:3000/todo', inputValues)
-      .then(({ data }) => {
-        console.log(data);
-        // setInputValues({title: '', description: ''}) // ToDoの追加フォームの入力欄を空にする
-        setIsAddTaskFormOpen(false) // ToDoの追加フォームを非表示にする
-        // setTodos({}) // 更新関数を動かしてあげないと再レンダリングされないが、useEffectでtodosを監視しているので不要
-      })
+      axios
+        .post('http://localhost:3000/todo', inputValues)
+        .then(({ data }) => {
+          console.log(data);
+          // setInputValues({title: '', description: ''}) // ToDoの追加フォームの入力欄を空にする
+          setIsAddTaskFormOpen(false) // ToDoの追加フォームを非表示にする
+          // setTodos({}) // 更新関数を動かしてあげないと再レンダリングされないが、useEffectでtodosを監視しているので不要
+        })
     },
     [inputValues]
   )
@@ -84,6 +85,15 @@ export const Top = () => {
     },
     [editTodoId, inputValues]
   )
+
+  // 削除ボタン押した時の処理
+  const handleDeleteButtonClick = useCallback((id) => {
+    axios
+        .delete(`http://localhost:3000/todo/${id}`)
+        .then(({ data }) => {
+          console.log(data);// 削除後の配列
+        })
+  }, [])
   
 
 
@@ -121,6 +131,7 @@ export const Top = () => {
               key={todo.id}
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
+              onDeleteButtonClick={handleDeleteButtonClick}
             />
           )
         })}
