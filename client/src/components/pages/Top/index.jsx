@@ -16,7 +16,7 @@ export const Top = () => {
   const [inputValues, setInputValues] = useState({
     title: '',
     description: '',
-  }) //useStateの引数は初期値
+  }) // useStateの引数は初期値
   // 表示・非表示の切り替え
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
   // ボタンをクリックした時のtrue/false切り替えの処理
@@ -36,11 +36,12 @@ export const Top = () => {
   const handleCreateTodoSubmit = useCallback(
     (event) => {
       event.preventDefault()
-      axios.post('http://localhost:3000/todo', inputValues).then(({ data }) => {
-        // console.log(data)
-        setInputValues({title: '', description: ''})
-        setIsAddTaskFormOpen(false)
-        // setTodos({}) // 更新関数を動かしてあげないと再レンダリングされない
+      axios.post('http://localhost:3000/todo', inputValues)
+      .then(({ data }) => {
+        console.log(data);
+        // setInputValues({title: '', description: ''}) // ToDoの追加フォームの入力欄を空にする
+        setIsAddTaskFormOpen(false) // ToDoの追加フォームを非表示にする
+        // setTodos({}) // 更新関数を動かしてあげないと再レンダリングされないが、useEffectでtodosを監視しているので不要
       })
     },
     [inputValues]
@@ -50,7 +51,7 @@ export const Top = () => {
   useEffect(() => {
     axios.get('http://localhost:3000/todo').then(({ data }) => {
       // console.log('data:', data) // Todo情報3つ分
-      setTodos(data) // 更新関数。useEffectを使っているので、初回レンダリング時のみ実行される。
+      setTodos(data) // 更新関数。useEffectを使っているので、初回レンダリング時に実行される。
     }).catch(({err}) => {
       console.log(err)
     })
