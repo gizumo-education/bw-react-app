@@ -17,21 +17,29 @@ export const Top = () => {
     title: '',
     description: '',
   }) // useStateの引数は初期値
-  // 表示・非表示の切り替え
+  // 編集対象のTodo記事のIDの保持、更新
+  const [editTodoId, setEditTodoId] = useState('')
+  // 追加フォーム表示・非表示の切り替え
   const [isAddTaskFormOpen, setIsAddTaskFormOpen] = useState(false)
-  // ボタンをクリックした時のtrue/false切り替えの処理
+
+  // 追加ボタン／キャンセルボタンをクリックした時のtrue/false切り替えの処理
   const handleAddTaskButtonClick = useCallback(() => {
+    setInputValues({ title: '', description: '' }) // ToDoのタイトルと説明を空にする
+    setEditTodoId('') // editTodoIdに空文字を格納（編集フォーム非表示にするため）
     setIsAddTaskFormOpen(true)
   }, [])
   const handleCancelButtonClick = useCallback(() => {
+    setEditTodoId('') // editTodoIdに空文字を格納（編集フォーム非表示にするため）
     setIsAddTaskFormOpen(false)
   }, [])
+
   // 入力内容を反映する処理
   const handleInputChange = useCallback((event) => {
     const { name, value } = event.target // 分割代入。nameには入力されたname属性が入り、valueにはその内容が入る
     // console.log('name:', name, 'value:', value)
     setInputValues((prev) => ({ ...prev, [name]: value })) // スプレッド構文
   }, [])
+
   // Submitボタンを押した時の処理
   const handleCreateTodoSubmit = useCallback(
     (event) => {
@@ -46,6 +54,37 @@ export const Top = () => {
     },
     [inputValues]
   )
+  // 編集ボタンを押した時の処理
+  const handleEditButtonClick = useCallback((id) => {
+    setIsAddTaskFormOpen(false) // ToDoの追加フォーム非表示（ToDoの追加フォームと編集フォームを同時に表示しない）
+    setEditTodoId(id)
+    const targetTodo = todos.find((todo) => todo.id === id)
+    // console.log(targetTodo);
+    setInputValues({
+      title: targetTodo.title,
+      description: targetTodo.description,
+    })
+  }, [todos])
+
+  // Todo編集→保存ボタンを押した時の処理
+  const handleEditedTodoSubmit = useCallback(
+    (event) => {
+      event.preventDefault()
+      axios
+        .patch(`http://localhost:3000/todo/${editTodoId}`, inputValues)
+        .then(({ data }) => {
+          // console.log(data)
+          setInputValues({
+            title: data.title,
+            description: data.description,
+          })
+          handleCancelButtonClick();
+          setEditTodoId('');
+        })
+    },
+    [editTodoId, inputValues]
+  )
+  
 
 
   useEffect(() => {
@@ -63,8 +102,27 @@ export const Top = () => {
       <ul className={styles.list}>
         {todos.map((todo) => {
           // console.log('todo:', todo) // Todo情報1つずつ
-          // return <ListItem key={todo.id} todo={todo} />
-          return <ListItem key={todo.id} todo={todo} />
+          // todosに格納されたToDoのidが一致する場合はフォームを表示
+          if (editTodoId === todo.id) {
+            return (
+              <li key={todo.id}>
+                <Form
+                  value={inputValues}
+                  editTodoId={editTodoId} // ToDoの編集フォームが開いているか否かでForm内のボタンを切り替え
+                  onChange={handleInputChange}
+                  onCancelClick={handleCancelButtonClick}
+                  onSubmit={handleEditedTodoSubmit}
+                />
+              </li>
+            )
+          }
+          return (
+            <ListItem
+              key={todo.id}
+              todo={todo}
+              onEditButtonClick={handleEditButtonClick}
+            />
+          )
         })}
         
         <li>
