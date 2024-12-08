@@ -55,6 +55,7 @@ export const Top = () => {
     },
     [inputValues]
   )
+
   // 編集ボタンを押した時の処理
   const handleEditButtonClick = useCallback((id) => {
     setIsAddTaskFormOpen(false) // ToDoの追加フォーム非表示（ToDoの追加フォームと編集フォームを同時に表示しない）
@@ -91,9 +92,25 @@ export const Top = () => {
     axios
         .delete(`http://localhost:3000/todo/${id}`)
         .then(({ data }) => {
+          // [sec17]Q: APIからのレスポンスが確認できたら、APIからのレスポンスをToDoの一覧を管理しているstateに反映させましょう
           console.log(data);// 削除後の配列
         })
   }, [])
+
+  // チェックボックス押した時の完了・未完了の切り替え処理
+  const handleToggleButtonClick = useCallback(
+    (id) => {
+      axios
+        .patch(`http://localhost:3000/todo/${id}/completion-status`, {
+          isCompleted: todos.find((todo) => todo.id === id).isCompleted,
+        })
+        .then(({ data }) => {
+          // [sec18]Q: ToDoの完了・未完了の切り替えが成功した場合、切り替え後のToDoの完了・未完了の状態を画面に反映させてください。
+          console.log(data)
+        })
+    },
+    [todos]
+  )
   
 
 
@@ -132,6 +149,7 @@ export const Top = () => {
               todo={todo}
               onEditButtonClick={handleEditButtonClick}
               onDeleteButtonClick={handleDeleteButtonClick}
+              onToggleButtonClick={handleToggleButtonClick}
             />
           )
         })}
