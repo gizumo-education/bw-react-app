@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react' // useStateを追加
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem' // 追加
@@ -16,7 +18,10 @@ import { object } from 'prop-types'
 //TopのList
 export const Top = () => {
   //setTodosは
-  const [todos, setTodos] = useState([])
+  //const [todos, setTodos] = useState([])
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+
   const [editTodoId, setEditTodoId] = useState('')
   //editTodoIdには、編集ボタンがクリックされた時に編集するToDoのidを格納します。
 
@@ -69,7 +74,9 @@ export const Top = () => {
         .catch((error) => {
           errorToast(error.message)
         })
-    }, [inputValues])
+    }, [setTodos, inputValues]
+  )
+
 
 
   //編集機能の実装
@@ -104,7 +111,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   //ToDoのidを格納できる
@@ -139,7 +146,7 @@ export const Top = () => {
           }
         })
     })
-  }, [])
+  }, [setTodos])
 
   //完了・未完了処理
   const handleToggleButtonClick = useCallback((id) => {
@@ -167,7 +174,7 @@ export const Top = () => {
         })
     })
   },
-    [todos]
+    [todos, setTodos]
   )
 
   useEffect(() => {
@@ -178,7 +185,7 @@ export const Top = () => {
       .catch((error) => {
         errorToast(error.message)
       })
-  }, [])
+  }, [setTodos])
 
   return (
     <Layout>
