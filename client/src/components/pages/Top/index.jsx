@@ -5,6 +5,7 @@ import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
 import { Icon } from '../../ui/Icon'
 import { Form } from '../../ui/Form'
+import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
@@ -52,6 +53,9 @@ export const Top = () => {
           setIsAddTaskFormOpen(false) // ToDoの追加フォームを非表示にする
           // setTodos({}) // 更新関数を動かしてあげないと再レンダリングされないが、useEffectでtodosを監視しているので不要
         })
+        .catch((error) => {
+          errorToast(error.message)
+        })
     },
     [inputValues]
   )
@@ -83,6 +87,20 @@ export const Top = () => {
           handleCancelButtonClick();
           setEditTodoId('');
         })
+        .catch((error) => {
+          // eslint-disable-next-line default-case
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '更新するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            
+            default:
+              errorToast(error.message)
+              break
+          }
+        })
     },
     [editTodoId, inputValues]
   )
@@ -94,6 +112,20 @@ export const Top = () => {
         .then(({ data }) => {
           // [sec17]Q: APIからのレスポンスが確認できたら、APIからのレスポンスをToDoの一覧を管理しているstateに反映させましょう
           console.log(data);// 削除後の配列
+        })
+        .catch((error) => {
+          // eslint-disable-next-line default-case
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '削除するToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+            
+            default:
+              errorToast(error.message)
+              break
+          }
         })
   }, [])
 
@@ -107,6 +139,20 @@ export const Top = () => {
         .then(({ data }) => {
           // [sec18]Q: ToDoの完了・未完了の切り替えが成功した場合、切り替え後のToDoの完了・未完了の状態を画面に反映させてください。
           console.log(data)
+        })
+        .catch((error) => {
+          // eslint-disable-next-line default-case
+          switch (error.statusCode) {
+            case 404:
+              errorToast(
+                '完了・未完了を切り替えるToDoが見つかりませんでした。画面を更新して再度お試しください。'
+              )
+              break
+
+            default:
+              errorToast(error.message)
+              break
+          }
         })
     },
     [todos]
