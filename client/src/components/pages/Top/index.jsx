@@ -9,6 +9,13 @@ import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
+// 口頭レビュー
+// 機能の流れを2つ説明（説明する機能はメンターが指定）
+// 練習問題のコードだけではなく、関連するすべてのコードを説明する
+
+// 練習問題レビュー
+// 各セクションの練習問題の確認
+
 export const Top = () => {
   // ---- state ----
   // Todo情報の保持、更新
