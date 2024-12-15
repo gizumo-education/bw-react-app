@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { axios } from '../../../utils/axiosConfig'
+import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 import { Layout } from '../../ui/Layout'
 import { ListItem } from '../../ui/ListItem'
 import { Button } from '../../ui/Button'
@@ -19,7 +22,10 @@ import styles from './index.module.css'
 export const Top = () => {
   // ---- state ----
   // Todo情報の保持、更新
-  const [todos, setTodos] = useState([])
+  // const [todos, setTodos] = useState([]) // Recoilを使用するため不要
+  const todos = useRecoilValue(incompleteTodoListState)
+  const setTodos = useSetRecoilState(todoState)
+
   // 入力値の保持、更新
   const [inputValues, setInputValues] = useState({
     title: '',
@@ -64,7 +70,7 @@ export const Top = () => {
           errorToast(error.message)
         })
     },
-    [inputValues]
+    [setTodos, inputValues]
   )
 
   // 編集ボタンを押した時の処理
