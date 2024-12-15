@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+// useRecoilState不使用
 import { axios } from '../../../utils/axiosConfig'
 import { todoState, incompleteTodoListState } from '../../../stores/todoState'
 import { Layout } from '../../ui/Layout'
@@ -12,12 +13,21 @@ import { errorToast } from '../../../utils/errorToast'
 
 import styles from './index.module.css'
 
-// 口頭レビュー
-// 機能の流れを2つ説明（説明する機能はメンターが指定）
-// 練習問題のコードだけではなく、関連するすべてのコードを説明する
+// [sec19] 口頭レビュー①
+  // 機能の流れを2つ説明（説明する機能はメンターが指定）
+    // 一覧／追加／編集／削除
+  // 練習問題のコードだけではなく、関連するすべてのコードを説明する
 
 // 練習問題レビュー
-// 各セクションの練習問題の確認
+  // 各セクションの練習問題の確認
+
+// [Sec22] 口頭レビュー②
+  // Local StateとGlobal Stateの違いについて
+
+// 練習問題のレビュー
+  // 未完了のToDo一覧が正しく表示されているか
+  // 完了済みのToDo一覧が正しく表示されているか
+  // コードの確認
 
 export const Top = () => {
   // ---- state ----
@@ -115,7 +125,7 @@ export const Top = () => {
           }
         })
     },
-    [editTodoId, inputValues]
+    [setTodos, editTodoId, inputValues]
   )
 
   // 削除ボタン押した時の処理
@@ -140,7 +150,7 @@ export const Top = () => {
               break
           }
         })
-  }, [])
+  }, [setTodos])
 
   // チェックボックス押した時の完了・未完了の切り替え処理
   const handleToggleButtonClick = useCallback(
@@ -168,7 +178,7 @@ export const Top = () => {
           }
         })
     },
-    [todos]
+    [todos, setTodos]
   )
   
 
@@ -180,7 +190,7 @@ export const Top = () => {
     }).catch(({err}) => {
       console.log(err)
     })
-  }, [todos]) // 第二引数に依存配列を渡すと、その配列の変更の際にもuseEffect内の処理が実行される
+  }, [todos, setTodos]) // 第二引数に依存配列を渡すと、その配列の変更の際にもuseEffect内の処理が実行される
 
   return (
     <Layout>
