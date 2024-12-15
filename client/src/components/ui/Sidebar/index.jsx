@@ -1,10 +1,12 @@
 import { memo } from 'react'
-// NavLinkコンポーネント：クリックした際にページ遷移を行うためのコンポーネント
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { NavLink } from 'react-router-dom'
+// NavLinkコンポーネント：クリックした際にページ遷移を行うためのコンポーネント
 // 動きとしてはHTMLのaタグと同じですが、aタグと違いページ遷移を行う際にページ全体がリロードされないため、
 // SPAの特徴である高速なページ遷移を実現することができます。
 // また、もう一つの特徴として、現在のURLとNavLinkコンポーネントのpropsであるtoの値が一致している場合には、activeクラスが付与されます。
 // これにより、現在表示しているページのリンクの背景色を変更するなどして、ユーザーに現在表示しているページであることをわかりやすくすることができます。
+import { Icon } from '../Icon'
 
 import styles from './index.module.css'
 
